@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#FFF</color>
+    <color name="colorPrimaryDark">#000</color>
+    <color name="colorAccent">#26C6dA</color>
+    <color name="diagramCircleOrdinary">#66F</color>
+    <color name="diagramCircleOptimal">#F00</color>
+    <color name="fabColor">#26C6dA</color>
+</resources>

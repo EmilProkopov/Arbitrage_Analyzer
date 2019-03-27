@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Arbitrage Analyzer</string>
+    <string name="pref_title_vibrate">Vibrate</string>
+    <string name="settings_toolbar_title">Settings</string>
+    <string name="Main_toolbar_button_description">Settings</string>
+    <string name="profit_string">Profit: %1$s %2$s</string>
+    <string name="amount_string">Amount: %1$s %2$s</string>
+    <string name="back_arrow_settings">Back</string>
+    <string name="date_time_string">Last updated: %1$s</string>
+    <string name="title_activity_settings">Settings</string>
+</resources>

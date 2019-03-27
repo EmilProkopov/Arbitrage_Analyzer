@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="currency_pairs">
+        <item>BTC/USD</item>
+        <item>ETH/USD</item>
+    </string-array>
+
+    <string-array name="depth_limits">
+        <item>10</item>
+        <item>20</item>
+        <item>50</item>
+        <item>100</item>
+        <item>500</item>
+        <item>1000</item>
+    </string-array>
+
+</resources>

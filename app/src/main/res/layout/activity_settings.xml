@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/colorPrimary"
+    android:id="@+id/settings_layout"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    tools:context="com.course_project.arbitrage_analyzer.ui.SettingsActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:background="@color/colorPrimaryDark"
+        android:id="@+id/settings_toolbar"
+        android:layout_height="?actionBarSize"
+        android:layout_width="match_parent">
+
+        <FrameLayout
+            android:gravity="center_vertical"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent">
+
+            <TextView
+                android:gravity="center"
+                android:id="@+id/currency_pair"
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:textColor="@color/colorPrimary"
+                android:textSize="25sp"
+                android:text="@string/settings_toolbar_title" />
+
+            <ImageButton
+                android:background="@color/colorPrimaryDark"
+                android:onClick="onClick3"
+                android:contentDescription="@string/back_arrow_settings"
+                android:id="@+id/back_btn"
+                android:layout_gravity="start"
+                android:layout_height="48dp"
+                android:layout_width="48dp"
+                app:srcCompat="@drawable/ic_arrow_back_white_24dp" />
+
+        </FrameLayout>
+
+    </android.support.v7.widget.Toolbar>
+
+    <fragment android:name="com.course_project.arbitrage_analyzer.ui.SettingsFragment"
+        android:id="@+id/settings_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="8dp"/>
+
+</LinearLayout>

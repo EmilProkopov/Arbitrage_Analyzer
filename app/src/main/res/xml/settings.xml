@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="General settings">
+
+        <EditTextPreference
+            android:defaultValue="10"
+            android:dialogTitle="Input the update rate (seconds)"
+            android:key="update_rate"
+            android:summary="Set the update rate (seconds)"
+            android:dialogLayout="@layout/preference_edit_text"
+            android:title="Update rate"/>
+
+        <ListPreference
+            android:defaultValue="BTC/USD"
+            android:dialogTitle="Choose the currency pair"
+            android:entries="@array/currency_pairs"
+            android:entryValues="@array/currency_pairs"
+            android:key="currency_pares"
+            android:summary="Set the currency pair you want to trade"
+            android:title="Currency pairs" />
+
+        <ListPreference
+            android:defaultValue="50"
+            android:dialogTitle="Choose max number of top bids/asks taken from one marketName"
+            android:entries="@array/depth_limits"
+            android:entryValues="@array/depth_limits"
+            android:key="depth_limit"
+            android:summary="Max number of top bids/asks taken from one market"
+            android:title="Limit of bids/asks from one market" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Exchanges to use">
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="bitfinex"
+            android:summary="Bitfinex"
+            android:title="Include data from Bitfinex" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="cex"
+            android:summary="Cex"
+            android:title="Include data from Cex" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="exmo"
+            android:summary="Exmo"
+            android:title="Include data from Exmo" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="gdax"
+            android:summary="Gdax"
+            android:title="Include data from Gdax" />
+
+    </PreferenceCategory>
+
+</android.support.v7.preference.PreferenceScreen>
