@@ -14,7 +14,18 @@ public class OutputDataSet {
     private Double amount;
     private Double optimalAmount;
     private Double optimalProfit;
+
+    private String firstCurrency;
     private String secondCurrency;
+    private Double firstCurrencyProfit;
+    private Double secondCurrencyProfit;
+    private Double firstCurrencyAmount;
+    private Double secondCurrencyAmount;
+
+    private List<Double> firstCurrencyBidPoints;
+    private List<Double> firstCurrencyAskPoints;
+    private List<Double> secondCurrencyBidPoints;
+    private List<Double> secondCurrencyAskPoints;
 
     private static final double impossiblyHugePrice = 1e9;
 
@@ -25,6 +36,14 @@ public class OutputDataSet {
         profit = 0.0;
         optimalAmount = 0.0;
         optimalProfit = 0.0;
+        firstCurrencyProfit = 0.0;
+        secondCurrencyProfit = 0.0;
+        firstCurrencyAmount = 0.0;
+        secondCurrencyAmount = 0.0;
+        firstCurrencyBidPoints = new ArrayList<>();
+        firstCurrencyAskPoints = new ArrayList<>();
+        secondCurrencyAskPoints = new ArrayList<>();
+        secondCurrencyBidPoints = new ArrayList<>();
     }
 
     //Unite deals of same type made on same market into one deal.
@@ -191,4 +210,75 @@ public class OutputDataSet {
         this.secondCurrency = secondCurrency;
     }
 
+    public String getFirstCurrency() {
+        return firstCurrency;
+    }
+
+    public void setFirstCurrency(String firstCurrency) {
+        this.firstCurrency = firstCurrency;
+    }
+
+    public Double getFirstCurrencyProfit() {
+        return firstCurrencyProfit;
+    }
+
+    public void setFirstCurrencyProfit(Double firstCurrencyProfit) {
+        this.firstCurrencyProfit = firstCurrencyProfit;
+    }
+
+    public Double getSecondCurrencyProfit() {
+        return secondCurrencyProfit;
+    }
+
+    public void setSecondCurrencyProfit(Double secondCurrencyProfit) {
+        this.secondCurrencyProfit = secondCurrencyProfit;
+    }
+
+    public Double getFirstCurrencyAmount() {
+        return firstCurrencyAmount;
+    }
+
+    public void setFirstCurrencyAmount(Double firstCurrencyAmount) {
+        this.firstCurrencyAmount = firstCurrencyAmount;
+    }
+
+    public Double getSecondCurrencyAmount() {
+        return secondCurrencyAmount;
+    }
+
+    public void setSecondCurrencyAmount(Double secondCurrencyAmount) {
+        this.secondCurrencyAmount = secondCurrencyAmount;
+    }
+
+    public List<Double> getFirstCurrencyBidPoints() {
+        return firstCurrencyBidPoints;
+    }
+
+    public void setFirstCurrencyBidPoints(List<Double> firstCurrencyBidPoints) {
+        this.firstCurrencyBidPoints = firstCurrencyBidPoints;
+    }
+
+    public List<Double> getFirstCurrencyAskPoints() {
+        return firstCurrencyAskPoints;
+    }
+
+    public void setFirstCurrencyAskPoints(List<Double> firstCurrencyAskPoints) {
+        this.firstCurrencyAskPoints = firstCurrencyAskPoints;
+    }
+
+    public List<Double> getSecondCurrencyBidPoints() {
+        return secondCurrencyBidPoints;
+    }
+
+    public void setSecondCurrencyBidPoints(List<Double> secondCurrencyBidPoints) {
+        this.secondCurrencyBidPoints = secondCurrencyBidPoints;
+    }
+
+    public List<Double> getSecondCurrencyAskPoints() {
+        return secondCurrencyAskPoints;
+    }
+
+    public void setSecondCurrencyAskPoints(List<Double> secondCurrencyAskPoints) {
+        this.secondCurrencyAskPoints = secondCurrencyAskPoints;
+    }
 }

@@ -20,6 +20,7 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
 
     private ArbitragePresenter presenter;
     private SettingsContainer settings;
+    private String firstCurrency;
     private String secondCurrency; //Second currency in the pair.
     private OrderBookGetter orderBookGetter;
 
@@ -35,6 +36,7 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
 
     public void updateSettings(SettingsContainer newSettings) {
         this.settings = newSettings;
+        firstCurrency = settings.getCurrencyPare().split("/")[1];
         secondCurrency = settings.getCurrencyPare().split("/")[1];
     }
 
@@ -54,6 +56,16 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
         Double optimalProfit = 0.0;
         Integer num = -1;   //Number of deals to make.
         Double curK; //Current K.
+
+        Double firstCurrencyProfit = 0.0;
+        Double secondCurrencyProfit = 0.0;
+        Double firstCurrencyAmount = 0.0;
+        Double secondCurrencyAmount = 0.0;
+
+        ArrayList<Double> firstCurrencyBidPoints = new ArrayList<>();
+        ArrayList<Double> firstCurrencyAskPoints = new ArrayList<>();
+        ArrayList<Double> secondCurrencyBidPoints = new ArrayList<>();
+        ArrayList<Double> secondCurrencyAskPoints = new ArrayList<>();
 
         Double prevAmount = 0.0;
         Double prevProfit = 0.0;
@@ -125,6 +137,7 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
         outputDataSet.setAmountPoints(amountPoints);
         outputDataSet.setProfitPoints(profitPoints);
         outputDataSet.setDeals(deals);
+        outputDataSet.setFirstCurrency(firstCurrency);
         outputDataSet.setSecondCurrency(secondCurrency);
 
         //Unite buy and sell deals made on same market into one deal.
@@ -165,7 +178,6 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
         OutputDataSet dataSet = params[0];
 
         Log.d(LOGTAG, "SoloAsyncTask RUNNING");
-        Log.e(LOGTAG, "Publishing progress");
 
         if (dataSet.getDeals().size() <= 1) {
             presenter.showToast("No profit can be made.\nCheck Internet connection\n" +

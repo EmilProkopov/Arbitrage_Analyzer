@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements ArbitrageView {
     private ProgressBar pb;
     private final String LOGTAG = "MainActivity";
     private SettingsContainer settings;
+    private OutputDataSet lastOutputData;
 
     ArbitragePresenter presenter;
 
@@ -145,6 +146,8 @@ public class MainActivity extends AppCompatActivity implements ArbitrageView {
 
     @Override
     public void updateData(OutputDataSet dataSet) {
+
+        lastOutputData = dataSet;
         updateChart(dataSet);
 
         Float optimalAmount = dataSet.getOptimalAmount().floatValue();
@@ -195,6 +198,8 @@ public class MainActivity extends AppCompatActivity implements ArbitrageView {
 
         LineChart chart = findViewById(R.id.diagram);
         chart.setNoDataText("Please wait. Data receiving may take up to 10 seconds");
+        chart.setScaleEnabled(true);
+        chart.setPinchZoom(true);
 
         fab = findViewById(R.id.fab);
         pb = findViewById(R.id.progress_bar);
