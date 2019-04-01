@@ -1,7 +1,5 @@
 package com.course_project.arbitrage_analyzer.model;
 
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.course_project.arbitrage_analyzer.api.MarketApi;
@@ -9,10 +7,8 @@ import com.course_project.arbitrage_analyzer.network.bitfinex.BitfinexResponse;
 import com.course_project.arbitrage_analyzer.network.cex.CexResponse;
 import com.course_project.arbitrage_analyzer.network.exmo.ExmoResponse;
 import com.course_project.arbitrage_analyzer.network.gdax.GdaxResponse;
-import com.course_project.arbitrage_analyzer.ui.MainActivity;
 
 import java.io.IOException;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 import retrofit2.Call;
@@ -437,16 +433,14 @@ public class OrderBookGetter {
     }*/
 
     //Get Order books from all markets and unite them into one.
-    public CompiledOrderBook getCompiledOrderBook(int limit,
-                                                  WeakReference <MainActivity> activityReference,
-                                                  String currencyPair) {
+    public CompiledOrderBook getCompiledOrderBook(SettingsContainer settings) {
 
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(activityReference.get());
-
-        boolean bitfinex = sp.getBoolean("bitfinex", true);
-        boolean cex = sp.getBoolean("cex", true);
-        boolean exmo = sp.getBoolean("exmo", true);
-        boolean gdax = sp.getBoolean("gdax", true);
+        boolean bitfinex = settings.getBitfinex();
+        boolean cex = settings.getCex();
+        boolean exmo = settings.getExmo();
+        boolean gdax = settings.getGdax();
+        int limit = settings.getDepthLimit();
+        String currencyPair = settings.getCurrencyPare();
 
 
         int exchangeCount = 0;
@@ -464,7 +458,6 @@ public class OrderBookGetter {
 
         CompiledOrderBook result = new CompiledOrderBook();
 
-        //If this market is set active in settings.
         if (bitfinex) {
             processedExchangeCount++;
             progressListener.onUpdateOrderBookGetterProgress(

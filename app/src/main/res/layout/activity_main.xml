@@ -96,10 +96,20 @@
             android:id="@+id/iknowdaway"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorPrimaryDark" />
-
+            android:background="@color/colorPrimaryDark"
+            android:layout_marginBottom="20dp"/>
 
     </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:textSize="16sp"
+        android:layout_gravity="bottom"
+        android:id="@+id/time_line"
+        android:gravity="center"
+        android:background="@color/colorPrimaryDark"
+        android:textColor="@color/colorPrimary"/>
 
     <android.support.design.widget.FloatingActionButton
         android:onClick="onClick2"
@@ -111,16 +121,6 @@
         app:fabSize="normal"
         app:backgroundTint="@color/fabColor"
         app:srcCompat="@drawable/fab_level_drawable"/>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:layout_gravity="bottom"
-        android:id="@+id/time_line"
-        android:gravity="center"
-        android:background="@color/colorPrimaryDark"
-        android:textColor="@color/colorPrimary"/>
 
     <ProgressBar
         android:id="@+id/big_round_progress_bar"

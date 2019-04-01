@@ -14,6 +14,7 @@ public class OutputDataSet {
     private Double amount;
     private Double optimalAmount;
     private Double optimalProfit;
+    private String secondCurrency;
 
     private static final double impossiblyHugePrice = 1e9;
 
@@ -180,6 +181,14 @@ public class OutputDataSet {
 
     public void setOptimalProfit(Double optimalProfit) {
         this.optimalProfit = optimalProfit;
+    }
+
+    public String getSecondCurrency() {
+        return secondCurrency;
+    }
+
+    public void setSecondCurrency(String secondCurrency) {
+        this.secondCurrency = secondCurrency;
     }
 
 }
