@@ -13,6 +13,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,11 +38,14 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements ArbitrageView {
 
-    private FloatingActionButton fab;
-    private ProgressBar pb;
     private final String LOGTAG = "MainActivity";
+    private FloatingActionButton fab;
+    private ImageButton chartTypeBtn;
+    private ProgressBar pb;
     private SettingsContainer settings;
-    private OutputDataSet lastOutputData;
+    private OutputDataSet lastOutputDataSet = null;
+
+    private boolean chartTypeProfit = true;
 
     ArbitragePresenter presenter;
 
@@ -56,6 +60,19 @@ public class MainActivity extends AppCompatActivity implements ArbitrageView {
         presenter.onPauseResumeClick();
     }
 
+    public void onChartTypeClick(View v) {
+
+        chartTypeProfit = !chartTypeProfit;
+        updateChart();
+
+        Drawable d = chartTypeBtn.getDrawable();
+        if (chartTypeProfit) {
+            d.setLevel(0);
+        } else {
+            d.setLevel(1);
+        }
+    }
+
     @Override
     public void updateResumePauseView(boolean paused) {
         Drawable d = fab.getDrawable();
@@ -65,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements ArbitrageView {
             d.setLevel(1);
         }
     }
+
 
     @Override
     public void updateProgressBar(Integer progress) {
@@ -105,16 +123,29 @@ public class MainActivity extends AppCompatActivity implements ArbitrageView {
     }
 
 
-    private void updateChart(OutputDataSet dataSet) {
+    private void updateChart() {
+
+        if (lastOutputDataSet == null) {
+            return;
+        }
+        if (chartTypeProfit) {
+            displayProfitChart();
+        } else {
+            displayBidAskChart();
+        }
+    }
+
+
+    private void displayProfitChart() {
         //Display profit points on the diagram.
         LineChart chart = findViewById(R.id.diagram);
         //Points of the plot.
         List<Entry> chartEntries = new ArrayList<>();
         //Fill the list of points.
-        for (int i = 0; i < dataSet.getAmountPoints().size(); ++i) {
+        for (int i = 0; i < lastOutputDataSet.getAmountPoints().size(); ++i) {
 
-            chartEntries.add(new Entry(dataSet.getAmountPoints().get(i).floatValue()
-                    , dataSet.getProfitPoints().get(i).floatValue()));
+            chartEntries.add(new Entry(lastOutputDataSet.getAmountPoints().get(i).floatValue()
+                    , lastOutputDataSet.getProfitPoints().get(i).floatValue()));
         }
         //Make a DataSet with ordinary points.
         LineDataSet ds = new LineDataSet(chartEntries, "Profit/Money Diagram");
@@ -122,8 +153,8 @@ public class MainActivity extends AppCompatActivity implements ArbitrageView {
         ds.setCircleColors(getResources().getColor(R.color.diagramCircleOrdinary));
 
         //Make a DataSet with optimal point.
-        Float optimalAmount = dataSet.getOptimalAmount().floatValue();
-        Float optimalProfit = dataSet.getOptimalProfit().floatValue();
+        Float optimalAmount = lastOutputDataSet.getOptimalAmount().floatValue();
+        Float optimalProfit = lastOutputDataSet.getOptimalProfit().floatValue();
 
         List<Entry> optimalChartEntries = new ArrayList<>();
         optimalChartEntries.add(new Entry(optimalAmount, optimalProfit));
@@ -143,15 +174,50 @@ public class MainActivity extends AppCompatActivity implements ArbitrageView {
         chart.invalidate();
     }
 
+    private void displayBidAskChart() {
+
+        LineChart chart = findViewById(R.id.diagram);
+
+        List<Entry> askChartEntries = new ArrayList<>();
+        List<Entry> bidChartEntries = new ArrayList<>();
+        //Fill the list of points.
+        for (int i = 0; i < lastOutputDataSet.getAskAmountPoints().size(); ++i) {
+            askChartEntries.add(new Entry(lastOutputDataSet.getAskPricePoints().get(i).floatValue()
+                    , lastOutputDataSet.getAskAmountPoints().get(i).floatValue()));
+        }
+        for (int i = 0; i < lastOutputDataSet.getBidAmountPoints().size(); ++i) {
+            bidChartEntries.add(new Entry(lastOutputDataSet.getBidPricePoints().get(i).floatValue()
+                    , lastOutputDataSet.getBidAmountPoints().get(i).floatValue()));
+        }
+        //Make a DataSet with ordinary points.
+        LineDataSet askDs = new LineDataSet(askChartEntries, "Profit/Money Diagram");
+        askDs.setColor(R.color.colorPrimaryDark);
+        askDs.setCircleColors(getResources().getColor(R.color.diagramCircleAsk));
+
+        LineDataSet bidDs = new LineDataSet(bidChartEntries, "");
+        bidDs.setColor(R.color.colorPrimaryDark);
+        bidDs.setCircleColors(getResources().getColor(R.color.diagramCircleBid));
+
+        LineDataSet[] lineDataSets = new LineDataSet[2];
+        lineDataSets[0] = askDs;
+        lineDataSets[1] = bidDs;
+        LineData ld = new LineData(lineDataSets);
+
+        chart.setData(ld);
+        chart.getDescription().setText("Horizontal: amount; Vertical: profit");
+        chart.getLegend().setEnabled(false);
+        chart.invalidate();
+    }
+
 
     @Override
     public void updateData(OutputDataSet dataSet) {
 
-        lastOutputData = dataSet;
-        updateChart(dataSet);
+        lastOutputDataSet = dataSet;
+        updateChart();
 
-        Float optimalAmount = dataSet.getOptimalAmount().floatValue();
-        Float optimalProfit = dataSet.getOptimalProfit().floatValue();
+        Float optimalAmount = lastOutputDataSet.getOptimalAmount().floatValue();
+        Float optimalProfit = lastOutputDataSet.getOptimalProfit().floatValue();
 
         //Display optimal profit.
         ((TextView) findViewById(R.id.profit_string))
@@ -168,7 +234,7 @@ public class MainActivity extends AppCompatActivity implements ArbitrageView {
         ((TextView) findViewById(R.id.currency_pair)).setText(settings.getCurrencyPare());
 
         //Prepare data about deals for displaying.
-        DealListData dldata = new DealListData(dataSet);
+        DealListData dldata = new DealListData(lastOutputDataSet);
         //Display it.
         RecyclerView list = findViewById(R.id.iknowdaway);
         LinearLayoutManager llm = new LinearLayoutManager(this);
@@ -202,6 +268,7 @@ public class MainActivity extends AppCompatActivity implements ArbitrageView {
         chart.setPinchZoom(true);
 
         fab = findViewById(R.id.fab);
+        chartTypeBtn = findViewById(R.id.chart_type_btn);
         pb = findViewById(R.id.progress_bar);
 
         this.updateProgressBar(0);

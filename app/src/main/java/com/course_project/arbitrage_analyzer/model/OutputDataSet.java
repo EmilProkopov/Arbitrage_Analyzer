@@ -22,10 +22,10 @@ public class OutputDataSet {
     private Double firstCurrencyAmount;
     private Double secondCurrencyAmount;
 
-    private List<Double> firstCurrencyBidPoints;
-    private List<Double> firstCurrencyAskPoints;
-    private List<Double> secondCurrencyBidPoints;
-    private List<Double> secondCurrencyAskPoints;
+    private List<Double> bidAmountPoints;
+    private List<Double> askAmountPoints;
+    private List<Double> bidPricePoints;
+    private List<Double> askPricePoints;
 
     private static final double impossiblyHugePrice = 1e9;
 
@@ -40,10 +40,10 @@ public class OutputDataSet {
         secondCurrencyProfit = 0.0;
         firstCurrencyAmount = 0.0;
         secondCurrencyAmount = 0.0;
-        firstCurrencyBidPoints = new ArrayList<>();
-        firstCurrencyAskPoints = new ArrayList<>();
-        secondCurrencyAskPoints = new ArrayList<>();
-        secondCurrencyBidPoints = new ArrayList<>();
+        bidAmountPoints = new ArrayList<>();
+        askAmountPoints = new ArrayList<>();
+        askPricePoints = new ArrayList<>();
+        bidPricePoints = new ArrayList<>();
     }
 
     //Unite deals of same type made on same market into one deal.
@@ -250,35 +250,35 @@ public class OutputDataSet {
         this.secondCurrencyAmount = secondCurrencyAmount;
     }
 
-    public List<Double> getFirstCurrencyBidPoints() {
-        return firstCurrencyBidPoints;
+    public List<Double> getBidAmountPoints() {
+        return bidAmountPoints;
     }
 
-    public void setFirstCurrencyBidPoints(List<Double> firstCurrencyBidPoints) {
-        this.firstCurrencyBidPoints = firstCurrencyBidPoints;
+    public void setBidAmountPoints(List<Double> bidAmountPoints) {
+        this.bidAmountPoints = bidAmountPoints;
     }
 
-    public List<Double> getFirstCurrencyAskPoints() {
-        return firstCurrencyAskPoints;
+    public List<Double> getAskAmountPoints() {
+        return askAmountPoints;
     }
 
-    public void setFirstCurrencyAskPoints(List<Double> firstCurrencyAskPoints) {
-        this.firstCurrencyAskPoints = firstCurrencyAskPoints;
+    public void setAskAmountPoints(List<Double> askAmountPoints) {
+        this.askAmountPoints = askAmountPoints;
     }
 
-    public List<Double> getSecondCurrencyBidPoints() {
-        return secondCurrencyBidPoints;
+    public List<Double> getBidPricePoints() {
+        return bidPricePoints;
     }
 
-    public void setSecondCurrencyBidPoints(List<Double> secondCurrencyBidPoints) {
-        this.secondCurrencyBidPoints = secondCurrencyBidPoints;
+    public void setBidPricePoints(List<Double> bidPricePoints) {
+        this.bidPricePoints = bidPricePoints;
     }
 
-    public List<Double> getSecondCurrencyAskPoints() {
-        return secondCurrencyAskPoints;
+    public List<Double> getAskPricePoints() {
+        return askPricePoints;
     }
 
-    public void setSecondCurrencyAskPoints(List<Double> secondCurrencyAskPoints) {
-        this.secondCurrencyAskPoints = secondCurrencyAskPoints;
+    public void setAskPricePoints(List<Double> askPricePoints) {
+        this.askPricePoints = askPricePoints;
     }
 }

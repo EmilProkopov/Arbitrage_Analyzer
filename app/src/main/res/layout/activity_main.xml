@@ -25,6 +25,16 @@
                 android:layout_height="match_parent"
                 android:gravity="center_vertical">
 
+                <ImageButton
+                    android:id="@+id/chart_type_btn"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_gravity="start"
+                    android:background="@color/colorPrimaryDark"
+                    android:contentDescription="@string/Main_toolbar_button_description2"
+                    android:onClick="onChartTypeClick"
+                    app:srcCompat="@drawable/chart_btn_level_drawable" />
+
                 <TextView
                     android:id="@+id/currency_pair"
                     android:layout_width="match_parent"

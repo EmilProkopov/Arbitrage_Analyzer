@@ -76,4 +76,5 @@ public class ArbitragePresenterImpl implements ArbitragePresenter,
         view.updateData(dataSet);
         Log.e(LOGTAG, "onWorkerResult");
     }
+
 }

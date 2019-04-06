@@ -8,9 +8,11 @@ import com.course_project.arbitrage_analyzer.model.CompiledOrderBook;
 import com.course_project.arbitrage_analyzer.model.Deal;
 import com.course_project.arbitrage_analyzer.model.OrderBookGetter;
 import com.course_project.arbitrage_analyzer.model.OutputDataSet;
+import com.course_project.arbitrage_analyzer.model.PriceAmountPair;
 import com.course_project.arbitrage_analyzer.model.SettingsContainer;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 //Creates new thread, gets data from markets and displays it.
@@ -41,6 +43,29 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
     }
 
 
+    private void fillAskBidChartPoints(List<Double> bidAmountPoints ,
+                                       List<Double> askAmountPoints ,
+                                       List<Double> bidPricePoints ,
+                                       List<Double> askPricePoints ,
+                                       CompiledOrderBook orderBook) {
+
+        List<PriceAmountPair> asks = orderBook.getAsks();
+        List<PriceAmountPair> bids = orderBook.getBids();
+
+        for (int i = 0; i < asks.size(); ++i) {
+            if (asks.get(i).getAmount() > 0) {
+                askAmountPoints.add(asks.get(i).getAmount());
+                askPricePoints.add(asks.get(i).getPrice());
+            }
+        }
+        for (int i = 0; i < bids.size(); ++i) {
+            if (bids.get(i).getAmount() > 0) {
+                bidAmountPoints.add(bids.get(i).getAmount());
+                bidPricePoints.add(bids.get(i).getPrice());
+            }
+        }
+    }
+
     //Calculate the profit
     private OutputDataSet formOutputDataSet(CompiledOrderBook orderBook) {
 
@@ -62,10 +87,10 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
         Double firstCurrencyAmount = 0.0;
         Double secondCurrencyAmount = 0.0;
 
-        ArrayList<Double> firstCurrencyBidPoints = new ArrayList<>();
-        ArrayList<Double> firstCurrencyAskPoints = new ArrayList<>();
-        ArrayList<Double> secondCurrencyBidPoints = new ArrayList<>();
-        ArrayList<Double> secondCurrencyAskPoints = new ArrayList<>();
+        ArrayList<Double> bitAmountPoints = new ArrayList<>();
+        ArrayList<Double> askAmountPoints = new ArrayList<>();
+        ArrayList<Double> bidPricePoints = new ArrayList<>();
+        ArrayList<Double> askPricePoints = new ArrayList<>();
 
         Double prevAmount = 0.0;
         Double prevProfit = 0.0;
@@ -129,6 +154,9 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
             prevProfit = profit;
         }
 
+        fillAskBidChartPoints(bitAmountPoints, askAmountPoints, bidPricePoints, askPricePoints,
+                orderBook);
+
         //Put data into the resulting data set.
         outputDataSet.setProfit(profit);
         outputDataSet.setAmount(amount);
@@ -139,6 +167,16 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
         outputDataSet.setDeals(deals);
         outputDataSet.setFirstCurrency(firstCurrency);
         outputDataSet.setSecondCurrency(secondCurrency);
+
+        outputDataSet.setFirstCurrencyProfit(firstCurrencyProfit);
+        outputDataSet.setFirstCurrencyAmount(firstCurrencyAmount);
+        outputDataSet.setSecondCurrencyProfit(secondCurrencyProfit);
+        outputDataSet.setSecondCurrencyAmount(secondCurrencyAmount);
+
+        outputDataSet.setBidAmountPoints(bitAmountPoints);
+        outputDataSet.setAskAmountPoints(askAmountPoints);
+        outputDataSet.setBidPricePoints(bidPricePoints);
+        outputDataSet.setAskPricePoints(askPricePoints);
 
         //Unite buy and sell deals made on same market into one deal.
         outputDataSet.uniteDealsMadeOnSameMarkets();
