@@ -38,7 +38,7 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
 
     public void updateSettings(SettingsContainer newSettings) {
         this.settings = newSettings;
-        firstCurrency = settings.getCurrencyPare().split("/")[1];
+        firstCurrency = settings.getCurrencyPare().split("/")[0];
         secondCurrency = settings.getCurrencyPare().split("/")[1];
     }
 
@@ -100,6 +100,9 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
 
         OutputDataSet outputDataSet = new OutputDataSet();
 
+        fillAskBidChartPoints(bitAmountPoints, askAmountPoints, bidPricePoints, askPricePoints,
+                orderBook);
+
         while ((ax < orderBook.getAsks().size())
                 && (bx < orderBook.getBids().size())
                 //While we can make profit from the deal.
@@ -153,9 +156,6 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
             prevAmount = amount;
             prevProfit = profit;
         }
-
-        fillAskBidChartPoints(bitAmountPoints, askAmountPoints, bidPricePoints, askPricePoints,
-                orderBook);
 
         //Put data into the resulting data set.
         outputDataSet.setProfit(profit);

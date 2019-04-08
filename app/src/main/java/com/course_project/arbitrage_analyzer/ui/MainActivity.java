@@ -29,10 +29,12 @@ import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.utils.EntryXComparator;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -189,6 +191,9 @@ public class MainActivity extends AppCompatActivity implements ArbitrageView {
             bidChartEntries.add(new Entry(lastOutputDataSet.getBidPricePoints().get(i).floatValue()
                     , lastOutputDataSet.getBidAmountPoints().get(i).floatValue()));
         }
+        Collections.sort(bidChartEntries, new EntryXComparator());
+        Collections.sort(askChartEntries, new EntryXComparator());
+
         //Make a DataSet with ordinary points.
         LineDataSet askDs = new LineDataSet(askChartEntries, "Profit/Money Diagram");
         askDs.setColor(R.color.colorPrimaryDark);

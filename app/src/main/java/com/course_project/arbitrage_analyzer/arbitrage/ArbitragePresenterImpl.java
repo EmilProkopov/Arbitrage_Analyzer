@@ -16,6 +16,7 @@ public class ArbitragePresenterImpl implements ArbitragePresenter,
     private ArbitrageView view;
     private ArbitrageModel model;
     private boolean paused;
+    private SettingsContainer lastSettings = null;
 
     public ArbitragePresenterImpl(ArbitrageView view) {
         this.view = view;
@@ -40,11 +41,15 @@ public class ArbitragePresenterImpl implements ArbitragePresenter,
     public void onPauseResumeClick() {
         this.paused = !this.paused;
         if (this.paused) {
-            this.model.cancelBackgroundTask();
+            model.cancelBackgroundTask();
         } else {
-            this.model.startBackgroundTask();
+            model.startBackgroundTask();
+            if (lastSettings != null) {
+                model.updateSettings(lastSettings);
+            }
         }
-        this.view.updateResumePauseView(this.paused);
+        view.updateResumePauseView(this.paused);
+        view.updateProgressBar(0);
     }
 
     @Override
@@ -61,6 +66,7 @@ public class ArbitragePresenterImpl implements ArbitragePresenter,
 
     @Override
     public void onSettingsChanged(SettingsContainer settings) {
+        lastSettings = settings;
         model.updateSettings(settings);
     }
 
