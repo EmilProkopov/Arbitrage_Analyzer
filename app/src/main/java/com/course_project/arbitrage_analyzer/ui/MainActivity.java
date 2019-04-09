@@ -155,7 +155,7 @@ public class MainActivity extends AppCompatActivity implements ArbitrageView {
         ds.setCircleColors(getResources().getColor(R.color.diagramCircleOrdinary));
 
         //Make a DataSet with optimal point.
-        Float optimalAmount = lastOutputDataSet.getOptimalAmount().floatValue();
+        Float optimalAmount = lastOutputDataSet.getOptimalSecondCurrencyAmount().floatValue();
         Float optimalProfit = lastOutputDataSet.getOptimalProfit().floatValue();
 
         List<Entry> optimalChartEntries = new ArrayList<>();
@@ -171,8 +171,9 @@ public class MainActivity extends AppCompatActivity implements ArbitrageView {
         LineData ld = new LineData(lineDataSets);
 
         chart.setData(ld);
-        chart.getDescription().setText("Horizontal: amount; Vertical: profit");
+        chart.getDescription().setText("Horizontal: price; Vertical: amount");
         chart.getLegend().setEnabled(false);
+        chart.getAxisLeft().setDrawLabels(false);
         chart.invalidate();
     }
 
@@ -211,6 +212,7 @@ public class MainActivity extends AppCompatActivity implements ArbitrageView {
         chart.setData(ld);
         chart.getDescription().setText("Horizontal: amount; Vertical: profit");
         chart.getLegend().setEnabled(false);
+        chart.getAxisLeft().setDrawLabels(false);
         chart.invalidate();
     }
 
@@ -221,7 +223,8 @@ public class MainActivity extends AppCompatActivity implements ArbitrageView {
         lastOutputDataSet = dataSet;
         updateChart();
 
-        Float optimalAmount = lastOutputDataSet.getOptimalAmount().floatValue();
+        Float optimalFCAmount = lastOutputDataSet.getOptimalFirstCurrencyAmount().floatValue();
+        Float optimalSCAmount = lastOutputDataSet.getOptimalSecondCurrencyAmount().floatValue();
         Float optimalProfit = lastOutputDataSet.getOptimalProfit().floatValue();
 
         //Display optimal profit.
@@ -232,7 +235,9 @@ public class MainActivity extends AppCompatActivity implements ArbitrageView {
         //Display optimal amount.
         ((TextView) findViewById(R.id.amount_string))
                 .setText(getString(R.string.amount_string,
-                        String.valueOf(Math.round(optimalAmount * 100) / 100.0),
+                        String.valueOf(Math.round(optimalFCAmount * 100) / 100.0),
+                        dataSet.getFirstCurrency(),
+                        String.valueOf(Math.round(optimalSCAmount * 100) / 100.0),
                         dataSet.getSecondCurrency()));
 
         //Display current currency pair.

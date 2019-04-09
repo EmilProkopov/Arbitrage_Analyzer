@@ -52,15 +52,21 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
         List<PriceAmountPair> asks = orderBook.getAsks();
         List<PriceAmountPair> bids = orderBook.getBids();
 
+        double y = 0.0;
+
         for (int i = 0; i < asks.size(); ++i) {
             if (asks.get(i).getAmount() > 0) {
-                askAmountPoints.add(asks.get(i).getAmount());
+                y += asks.get(i).getAmount() * asks.get(i).getPrice();
+                askAmountPoints.add(y);
                 askPricePoints.add(asks.get(i).getPrice());
             }
         }
+
+        y = 0.0;
         for (int i = 0; i < bids.size(); ++i) {
             if (bids.get(i).getAmount() > 0) {
-                bidAmountPoints.add(bids.get(i).getAmount());
+                y += bids.get(i).getAmount() * bids.get(i).getPrice();
+                bidAmountPoints.add(y);
                 bidPricePoints.add(bids.get(i).getPrice());
             }
         }
@@ -70,22 +76,19 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
     private OutputDataSet formOutputDataSet(CompiledOrderBook orderBook) {
 
         Double profit = 0.0; //Profit that we can get.
-        Double amount = 0.0; //Amount of money necessary to do it.
+        Double firstCurrencyAmount = 0.0;
+        Double secondCurrencyAmount = 0.0;
         //Points of the plot.
         ArrayList<Double> profitPoints = new ArrayList<>();
         ArrayList<Double> amountPoints = new ArrayList<>();
         //List of deals to make.
         ArrayList<Deal> deals = new ArrayList<>(); //List of deals that should be made.
         final Double alpha = 0.1;
-        Double optimalAmount = 0.0;
+        Double optimalSecondCurrencyAmount = 0.0;
+        Double optimalFirstCurrencyAmount = 0.0;
         Double optimalProfit = 0.0;
         Integer num = -1;   //Number of deals to make.
         Double curK; //Current K.
-
-        Double firstCurrencyProfit = 0.0;
-        Double secondCurrencyProfit = 0.0;
-        Double firstCurrencyAmount = 0.0;
-        Double secondCurrencyAmount = 0.0;
 
         ArrayList<Double> bitAmountPoints = new ArrayList<>();
         ArrayList<Double> askAmountPoints = new ArrayList<>();
@@ -127,10 +130,11 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
                     - orderBook.getAsks().get(ax).getPrice()) * m;
 
             profit += currentProfit;
-            amount += orderBook.getAsks().get(ax).getPrice() * m;
+            secondCurrencyAmount += orderBook.getAsks().get(ax).getPrice() * m;
+            firstCurrencyAmount += m;
 
             profitPoints.add(profit);
-            amountPoints.add(amount);
+            amountPoints.add(secondCurrencyAmount);
 
             deals.add(new Deal("Buy", orderBook.getAsks().get(ax).getMarketName()
                     , m, orderBook.getAsks().get(ax).getPrice()));
@@ -145,22 +149,23 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
 
             //Check if we have achieved the optimal point.
             if (num.equals(2)) {
-                firstK = (profit - prevProfit) / (amount - prevAmount);
+                firstK = (profit - prevProfit) / (secondCurrencyAmount - prevAmount);
             } else if (num > 1) {
-                curK = (profit - prevProfit) / (amount - prevAmount);
+                curK = (profit - prevProfit) / (secondCurrencyAmount - prevAmount);
                 if (curK / firstK >= alpha) {
-                    optimalAmount = amount;
+                    optimalSecondCurrencyAmount = secondCurrencyAmount;
+                    optimalFirstCurrencyAmount = firstCurrencyAmount;
                     optimalProfit = profit;
                 }
             }
-            prevAmount = amount;
+            prevAmount = secondCurrencyAmount;
             prevProfit = profit;
         }
 
         //Put data into the resulting data set.
         outputDataSet.setProfit(profit);
-        outputDataSet.setAmount(amount);
-        outputDataSet.setOptimalAmount(optimalAmount);
+        outputDataSet.setOptimalSecondCurrencyAmount(optimalSecondCurrencyAmount);
+        outputDataSet.setOptimalFirstCurrencyAmount(optimalFirstCurrencyAmount);
         outputDataSet.setOptimalProfit(optimalProfit);
         outputDataSet.setAmountPoints(amountPoints);
         outputDataSet.setProfitPoints(profitPoints);
@@ -168,9 +173,7 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
         outputDataSet.setFirstCurrency(firstCurrency);
         outputDataSet.setSecondCurrency(secondCurrency);
 
-        outputDataSet.setFirstCurrencyProfit(firstCurrencyProfit);
         outputDataSet.setFirstCurrencyAmount(firstCurrencyAmount);
-        outputDataSet.setSecondCurrencyProfit(secondCurrencyProfit);
         outputDataSet.setSecondCurrencyAmount(secondCurrencyAmount);
 
         outputDataSet.setBidAmountPoints(bitAmountPoints);

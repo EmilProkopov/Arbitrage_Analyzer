@@ -11,14 +11,12 @@ public class OutputDataSet {
     private List<Double> profitPoints;
     private List<Deal> deals;
     private Double profit;
-    private Double amount;
-    private Double optimalAmount;
+    private Double optimalSecondCurrencyAmount;
+    private Double optimalFirstCurrencyAmount;
     private Double optimalProfit;
 
     private String firstCurrency;
     private String secondCurrency;
-    private Double firstCurrencyProfit;
-    private Double secondCurrencyProfit;
     private Double firstCurrencyAmount;
     private Double secondCurrencyAmount;
 
@@ -34,10 +32,9 @@ public class OutputDataSet {
         profitPoints = new ArrayList<>();
         deals = new ArrayList<>();
         profit = 0.0;
-        optimalAmount = 0.0;
+        optimalFirstCurrencyAmount = 0.0;
+        optimalSecondCurrencyAmount = 0.0;
         optimalProfit = 0.0;
-        firstCurrencyProfit = 0.0;
-        secondCurrencyProfit = 0.0;
         firstCurrencyAmount = 0.0;
         secondCurrencyAmount = 0.0;
         bidAmountPoints = new ArrayList<>();
@@ -145,14 +142,6 @@ public class OutputDataSet {
         deals = newDealList;
     }
 
-    public Double getAmount() {
-        return amount;
-    }
-
-    public void setAmount(Double amount) {
-        this.amount = amount;
-    }
-
     public List<Double> getAmountPoints() {
         return amountPoints;
     }
@@ -186,12 +175,12 @@ public class OutputDataSet {
         this.profit = profit;
     }
 
-    public Double getOptimalAmount() {
-        return optimalAmount;
+    public Double getOptimalSecondCurrencyAmount() {
+        return optimalSecondCurrencyAmount;
     }
 
-    public void setOptimalAmount(Double optimalAmount) {
-        this.optimalAmount = optimalAmount;
+    public void setOptimalSecondCurrencyAmount(Double optimalSecondCurrencyAmount) {
+        this.optimalSecondCurrencyAmount = optimalSecondCurrencyAmount;
     }
 
     public Double getOptimalProfit() {
@@ -216,22 +205,6 @@ public class OutputDataSet {
 
     public void setFirstCurrency(String firstCurrency) {
         this.firstCurrency = firstCurrency;
-    }
-
-    public Double getFirstCurrencyProfit() {
-        return firstCurrencyProfit;
-    }
-
-    public void setFirstCurrencyProfit(Double firstCurrencyProfit) {
-        this.firstCurrencyProfit = firstCurrencyProfit;
-    }
-
-    public Double getSecondCurrencyProfit() {
-        return secondCurrencyProfit;
-    }
-
-    public void setSecondCurrencyProfit(Double secondCurrencyProfit) {
-        this.secondCurrencyProfit = secondCurrencyProfit;
     }
 
     public Double getFirstCurrencyAmount() {
@@ -280,5 +253,13 @@ public class OutputDataSet {
 
     public void setAskPricePoints(List<Double> askPricePoints) {
         this.askPricePoints = askPricePoints;
+    }
+
+    public Double getOptimalFirstCurrencyAmount() {
+        return optimalFirstCurrencyAmount;
+    }
+
+    public void setOptimalFirstCurrencyAmount(Double optimalFirstCurrencyAmount) {
+        this.optimalFirstCurrencyAmount = optimalFirstCurrencyAmount;
     }
 }
