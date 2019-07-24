@@ -192,6 +192,25 @@ public class MainActivity extends AppCompatActivity implements ArbitrageView {
             bidChartEntries.add(new Entry(lastOutputDataSet.getBidPricePoints().get(i).floatValue()
                     , lastOutputDataSet.getBidAmountPoints().get(i).floatValue()));
         }
+        //////////////////////////////////////////////////////////
+        Log.e(LOGTAG, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+        ArrayList<Float> xesAsk = new ArrayList<>();
+        ArrayList<Float> yesAsk = new ArrayList<>();
+        ArrayList<Float> xesBid = new ArrayList<>();
+        ArrayList<Float> yesBid = new ArrayList<>();
+        for (int i = 0; i < lastOutputDataSet.getAskAmountPoints().size(); ++i) {
+            xesAsk.add(lastOutputDataSet.getAskPricePoints().get(i).floatValue());
+            yesAsk.add(lastOutputDataSet.getAskAmountPoints().get(i).floatValue());
+        }
+        for (int i = 0; i < lastOutputDataSet.getBidAmountPoints().size(); ++i) {
+            yesBid.add(lastOutputDataSet.getBidAmountPoints().get(i).floatValue());
+            xesBid.add(lastOutputDataSet.getBidPricePoints().get(i).floatValue());
+        }
+        Log.e("XAsk", xesAsk.toString());
+        Log.e("YAsk", yesAsk.toString());
+        Log.e("XBid", xesBid.toString());
+        Log.e("YBid", yesBid.toString());
+        //////////////////////////////////////////////////
         Collections.sort(bidChartEntries, new EntryXComparator());
         Collections.sort(askChartEntries, new EntryXComparator());
 
