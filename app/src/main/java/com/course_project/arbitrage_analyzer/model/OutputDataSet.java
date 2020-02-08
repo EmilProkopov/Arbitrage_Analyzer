@@ -58,11 +58,11 @@ public class OutputDataSet {
         //Unite "Buy" deals.
         for (int i = 0; i < marketNames.size(); ++i) {
 
-            Deal curDeal = new Deal("Buy", marketNames.get(i), 0.0, 0.0);
+            Deal curDeal = new Deal(DealType.BUY, marketNames.get(i), 0.0, 0.0);
 
             for (int j = 0; j < deals.size(); ++j) {
                 if (deals.get(j).getMarketName().equals(marketNames.get(i))
-                        && deals.get(i).getType().equals("Buy")) {
+                        && deals.get(i).getType().equals(DealType.BUY)) {
 
                     curDeal.setAmount(curDeal.getAmount() + deals.get(i).getAmount());
                     curDeal.setPrice(Math.max(curDeal.getPrice(), deals.get(i).getPrice()));
@@ -76,11 +76,11 @@ public class OutputDataSet {
         //Unite "Sell" deals.
         for (int i = 0; i < marketNames.size(); ++i) {
 
-            Deal curDeal = new Deal("Sell", marketNames.get(i), 0.0, impossiblyHugePrice);
+            Deal curDeal = new Deal(DealType.SELL, marketNames.get(i), 0.0, impossiblyHugePrice);
 
             for (int j = 0; j < deals.size(); ++j) {
                 if (deals.get(j).getMarketName().equals(marketNames.get(i))
-                        && deals.get(i).getType().equals("Sell")) {
+                        && deals.get(i).getType().equals(DealType.SELL)) {
 
                     curDeal.setAmount(curDeal.getAmount() + deals.get(i).getAmount());
                     curDeal.setPrice(Math.min(curDeal.getPrice(), deals.get(i).getPrice()));
@@ -98,7 +98,7 @@ public class OutputDataSet {
         double sellAmount = 0;
         //Calculate buy and sell amounts.
         for (int i = 0; i < newDealList.size(); ++i) {
-            if (newDealList.get(i).getType().equals("Buy")) {
+            if (newDealList.get(i).getType().equals(DealType.BUY)) {
                 buyAmount += newDealList.get(i).getAmount();
             } else {
                 sellAmount += newDealList.get(i).getAmount();
@@ -108,7 +108,7 @@ public class OutputDataSet {
         if (buyAmount > sellAmount) {
             Double disbalanse = buyAmount - sellAmount;
             for (int i = 0; i < newDealList.size(); ++i) {
-                if (newDealList.get(i).getType().equals("Buy")) {
+                if (newDealList.get(i).getType().equals(DealType.SELL)) {
                     Double curDealBuyAmount = newDealList.get(i).getAmount();
                     if (curDealBuyAmount >= disbalanse) {
                         newDealList.get(i).setAmount(curDealBuyAmount - disbalanse);
@@ -124,7 +124,7 @@ public class OutputDataSet {
         } else if (buyAmount < sellAmount) {
             Double disbalanse = sellAmount - buyAmount;
             for (int i = 0; i < newDealList.size(); ++i) {
-                if (newDealList.get(i).getType().equals("Sell")) {
+                if (newDealList.get(i).getType().equals(DealType.SELL)) {
                     Double curDealSellAmount = newDealList.get(i).getAmount();
                     if (curDealSellAmount >= disbalanse) {
                         newDealList.get(i).setAmount(curDealSellAmount - disbalanse);

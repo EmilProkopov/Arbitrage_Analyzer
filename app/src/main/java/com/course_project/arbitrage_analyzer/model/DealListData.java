@@ -9,7 +9,7 @@ public class DealListData {
     private List<Double> prices;
     private List<Double> amounts;
     private List<String> names;
-    private List<String> types;
+    private List<DealType> types;
 
     //Convert data obtained from SoloAsyncTask into DealListData.
     public DealListData(OutputDataSet dataSet) {
@@ -42,7 +42,7 @@ public class DealListData {
         return names;
     }
 
-    public List<String> getTypes() {
+    public List<DealType> getTypes() {
         return types;
     }
 }

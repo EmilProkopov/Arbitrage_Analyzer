@@ -46,6 +46,12 @@ public class MainActivity extends AppCompatActivity implements ArbitrageView {
     private ProgressBar pb;
     private SettingsContainer settings;
     private OutputDataSet lastOutputDataSet = null;
+    private TextView profitStr;
+    private TextView amountStr;
+    private TextView currPairStr;
+    private TextView timeStr;
+    private RecyclerView dealList;
+    private View bigStartPB;
 
     private boolean chartTypeProfit = true;
 
@@ -143,7 +149,7 @@ public class MainActivity extends AppCompatActivity implements ArbitrageView {
         LineChart chart = findViewById(R.id.diagram);
         //Points of the plot.
         List<Entry> chartEntries = new ArrayList<>();
-        //Fill the list of points.
+        //Fill the dealList of points.
         for (int i = 0; i < lastOutputDataSet.getAmountPoints().size(); ++i) {
 
             chartEntries.add(new Entry(lastOutputDataSet.getAmountPoints().get(i).floatValue()
@@ -155,8 +161,8 @@ public class MainActivity extends AppCompatActivity implements ArbitrageView {
         ds.setCircleColors(getResources().getColor(R.color.diagramCircleOrdinary));
 
         //Make a DataSet with optimal point.
-        Float optimalAmount = lastOutputDataSet.getOptimalSecondCurrencyAmount().floatValue();
-        Float optimalProfit = lastOutputDataSet.getOptimalProfit().floatValue();
+        float optimalAmount = lastOutputDataSet.getOptimalSecondCurrencyAmount().floatValue();
+        float optimalProfit = lastOutputDataSet.getOptimalProfit().floatValue();
 
         List<Entry> optimalChartEntries = new ArrayList<>();
         optimalChartEntries.add(new Entry(optimalAmount, optimalProfit));
@@ -183,7 +189,7 @@ public class MainActivity extends AppCompatActivity implements ArbitrageView {
 
         List<Entry> askChartEntries = new ArrayList<>();
         List<Entry> bidChartEntries = new ArrayList<>();
-        //Fill the list of points.
+        //Fill the dealList of points.
         for (int i = 0; i < lastOutputDataSet.getAskAmountPoints().size(); ++i) {
             askChartEntries.add(new Entry(lastOutputDataSet.getAskPricePoints().get(i).floatValue()
                     , lastOutputDataSet.getAskAmountPoints().get(i).floatValue()));
@@ -206,10 +212,12 @@ public class MainActivity extends AppCompatActivity implements ArbitrageView {
             yesBid.add(lastOutputDataSet.getBidAmountPoints().get(i).floatValue());
             xesBid.add(lastOutputDataSet.getBidPricePoints().get(i).floatValue());
         }
+        /*
         Log.e("XAsk", xesAsk.toString());
         Log.e("YAsk", yesAsk.toString());
         Log.e("XBid", xesBid.toString());
         Log.e("YBid", yesBid.toString());
+         */
         //////////////////////////////////////////////////
         Collections.sort(bidChartEntries, new EntryXComparator());
         Collections.sort(askChartEntries, new EntryXComparator());
@@ -242,45 +250,41 @@ public class MainActivity extends AppCompatActivity implements ArbitrageView {
         lastOutputDataSet = dataSet;
         updateChart();
 
-        Float optimalFCAmount = lastOutputDataSet.getOptimalFirstCurrencyAmount().floatValue();
-        Float optimalSCAmount = lastOutputDataSet.getOptimalSecondCurrencyAmount().floatValue();
-        Float optimalProfit = lastOutputDataSet.getOptimalProfit().floatValue();
+        float optimalFCAmount = lastOutputDataSet.getOptimalFirstCurrencyAmount().floatValue();
+        float optimalSCAmount = lastOutputDataSet.getOptimalSecondCurrencyAmount().floatValue();
+        float optimalProfit = lastOutputDataSet.getOptimalProfit().floatValue();
 
         //Display optimal profit.
-        ((TextView) findViewById(R.id.profit_string))
-                .setText(getString(R.string.profit_string,
+        profitStr.setText(getString(R.string.profit_string,
                         String.valueOf(Math.round(optimalProfit * 100) / 100.0),
                         dataSet.getSecondCurrency()));
         //Display optimal amount.
-        ((TextView) findViewById(R.id.amount_string))
-                .setText(getString(R.string.amount_string,
+        amountStr.setText(getString(R.string.amount_string,
                         String.valueOf(Math.round(optimalFCAmount * 100) / 100.0),
                         dataSet.getFirstCurrency(),
                         String.valueOf(Math.round(optimalSCAmount * 100) / 100.0),
                         dataSet.getSecondCurrency()));
 
         //Display current currency pair.
-        ((TextView) findViewById(R.id.currency_pair)).setText(settings.getCurrencyPare());
+        currPairStr.setText(settings.getCurrencyPare());
 
         //Prepare data about deals for displaying.
         DealListData dldata = new DealListData(lastOutputDataSet);
-        //Display it.
-        RecyclerView list = findViewById(R.id.iknowdaway);
+        //Display it
         LinearLayoutManager llm = new LinearLayoutManager(this);
 
         llm.setOrientation(LinearLayoutManager.VERTICAL);
-        list.setLayoutManager(llm);
-        list.setAdapter(new DealListAdapter(dldata));
+        dealList.setLayoutManager(llm);
+        dealList.setAdapter(new DealListAdapter(dldata));
 
         //Display time
         long currentTime = Calendar.getInstance().getTimeInMillis();
         SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.US);
-        ((TextView) findViewById(R.id.time_line))
-                .setText(getString(R.string.date_time_string,
+        timeStr.setText(getString(R.string.date_time_string,
                         format.format(currentTime)));
 
         //Hide big round progress bar
-        findViewById(R.id.big_round_progress_bar).setVisibility(View.GONE);
+        bigStartPB.setVisibility(View.GONE);
     }
 
     @Override
@@ -299,6 +303,12 @@ public class MainActivity extends AppCompatActivity implements ArbitrageView {
         fab = findViewById(R.id.fab);
         chartTypeBtn = findViewById(R.id.chart_type_btn);
         pb = findViewById(R.id.progress_bar);
+        profitStr = findViewById(R.id.profit_string);
+        amountStr = findViewById(R.id.amount_string);
+        currPairStr = findViewById(R.id.currency_pair);
+        timeStr = findViewById(R.id.time_line);
+        dealList = findViewById(R.id.deal_list);
+        bigStartPB = findViewById(R.id.big_round_progress_bar);
 
         this.updateProgressBar(0);
         this.updateResumePauseView(false);

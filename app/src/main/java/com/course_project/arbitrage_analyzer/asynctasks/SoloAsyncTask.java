@@ -6,6 +6,7 @@ import android.util.Log;
 import com.course_project.arbitrage_analyzer.interfaces.ArbitragePresenter;
 import com.course_project.arbitrage_analyzer.model.CompiledOrderBook;
 import com.course_project.arbitrage_analyzer.model.Deal;
+import com.course_project.arbitrage_analyzer.model.DealType;
 import com.course_project.arbitrage_analyzer.model.OrderBookGetter;
 import com.course_project.arbitrage_analyzer.model.OutputDataSet;
 import com.course_project.arbitrage_analyzer.model.PriceAmountPair;
@@ -83,7 +84,7 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
         ArrayList<Double> amountPoints = new ArrayList<>();
         //List of deals to make.
         ArrayList<Deal> deals = new ArrayList<>(); //List of deals that should be made.
-        final Double alpha = 0.1;
+        final double alpha = 0.1;
         Double optimalSecondCurrencyAmount = 0.0;
         Double optimalFirstCurrencyAmount = 0.0;
         Double optimalProfit = 0.0;
@@ -136,9 +137,9 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
             profitPoints.add(profit);
             amountPoints.add(secondCurrencyAmount);
 
-            deals.add(new Deal("Buy", orderBook.getAsks().get(ax).getMarketName()
+            deals.add(new Deal(DealType.BUY, orderBook.getAsks().get(ax).getMarketName()
                     , m, orderBook.getAsks().get(ax).getPrice()));
-            deals.add(new Deal("Sell", orderBook.getBids().get(bx).getMarketName()
+            deals.add(new Deal(DealType.SELL, orderBook.getBids().get(bx).getMarketName()
                     , m, orderBook.getBids().get(bx).getPrice()));
 
             //Take into account that we have made a deal and top bid and ask are changed.

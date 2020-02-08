@@ -1,12 +1,13 @@
 package com.course_project.arbitrage_analyzer.model;
+
 //Information about deal.
 public class Deal {
-        private String type;
+        private DealType type;
         private String marketName;
         private Double amount;
         private Double price;
 
-        public Deal(String t, String n, Double a, Double p) {
+        public Deal(DealType t, String n, Double a, Double p) {
             type = t;
             marketName = n;
             amount = a;
@@ -21,23 +22,23 @@ public class Deal {
             this.price = price;
         }
 
-        public Double getAmount() {
+        Double getAmount() {
             return amount;
         }
 
-        public void setAmount(Double amount) {
+        void setAmount(Double amount) {
             this.amount = amount;
         }
 
-        public String getType() {
+        DealType getType() {
             return type;
         }
 
-        public void setType(String type) {
+        public void setType(DealType type) {
             this.type = type;
         }
 
-        public String getMarketName() {
+        String getMarketName() {
             return marketName;
         }
 
