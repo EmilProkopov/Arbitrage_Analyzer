@@ -493,9 +493,20 @@ public class OrderBookGetter {
 
         progressListener.onUpdateOrderBookGetterProgress(0);
 
-        Log.e(LOGTAG, result.toString());
+        /* Gson gson = new Gson();
+        largeLog(LOGTAG, gson.toJson(result)); */
+
         return result;
     }
+
+    /*public static void largeLog(String tag, String content) {
+        if (content.length() > 4000) {
+            Log.e(tag, content.substring(0, 4000));
+            largeLog(tag, content.substring(4000));
+        } else {
+            Log.d(tag, content);
+        }
+    }*/
 
 
     public interface OrderBookGetterProgressListener {
