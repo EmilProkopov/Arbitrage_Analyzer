@@ -47,7 +47,6 @@ public abstract class DisbalanceMinimizer {
                 askInd++;
                 bidInd++;
             }
-
             maxV_t += deltaAmount;
         }
 
