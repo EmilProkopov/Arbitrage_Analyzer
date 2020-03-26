@@ -5,6 +5,7 @@
     <color name="colorAccent">#26C6dA</color>
     <color name="diagramCircleOrdinary">#66F</color>
     <color name="diagramCircleOptimal">#F00</color>
+    <color name="diagramCircleReal">#090</color>
     <color name="diagramCircleAsk">#00F</color>
     <color name="diagramCircleBid">#0F0</color>
     <color name="fabColor">#26C6dA</color>

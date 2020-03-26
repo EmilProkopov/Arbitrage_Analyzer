@@ -15,6 +15,10 @@ public class OutputDataSet {
     private Double optimalFirstCurrencyAmount;
     private Double optimalProfit;
 
+    private Double realSecondCurrencyAmount;
+    private Double realFirstCurrencyAmount;
+    private Double realProfit;
+
     private String firstCurrency;
     private String secondCurrency;
     private Double firstCurrencyAmount;
@@ -35,6 +39,9 @@ public class OutputDataSet {
         optimalFirstCurrencyAmount = 0.0;
         optimalSecondCurrencyAmount = 0.0;
         optimalProfit = 0.0;
+        realFirstCurrencyAmount = 0.0;
+        realSecondCurrencyAmount = 0.0;
+        realProfit = 0.0;
         firstCurrencyAmount = 0.0;
         secondCurrencyAmount = 0.0;
         bidAmountPoints = new ArrayList<>();
@@ -261,5 +268,29 @@ public class OutputDataSet {
 
     public void setOptimalFirstCurrencyAmount(Double optimalFirstCurrencyAmount) {
         this.optimalFirstCurrencyAmount = optimalFirstCurrencyAmount;
+    }
+
+    public Double getRealSecondCurrencyAmount() {
+        return realSecondCurrencyAmount;
+    }
+
+    public void setRealSecondCurrencyAmount(Double realSecondCurrencyAmount) {
+        this.realSecondCurrencyAmount = realSecondCurrencyAmount;
+    }
+
+    public Double getRealFirstCurrencyAmount() {
+        return realFirstCurrencyAmount;
+    }
+
+    public void setRealFirstCurrencyAmount(Double realFirstCurrencyAmount) {
+        this.realFirstCurrencyAmount = realFirstCurrencyAmount;
+    }
+
+    public Double getRealProfit() {
+        return realProfit;
+    }
+
+    public void setRealProfit(Double realProfit) {
+        this.realProfit = realProfit;
     }
 }

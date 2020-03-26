@@ -1,6 +1,7 @@
 package com.course_project.arbitrage_analyzer.model.disbalance_minimization.minimizers;
 
 import com.course_project.arbitrage_analyzer.model.CompiledOrderBook;
+import com.course_project.arbitrage_analyzer.model.Util;
 import com.course_project.arbitrage_analyzer.model.disbalance_minimization.MinimizerResult;
 import com.course_project.arbitrage_analyzer.model.disbalance_minimization.TargetFunction;
 
@@ -29,6 +30,9 @@ public abstract class DisbalanceMinimizer {
 
     private void updateTargetFunctionParams() {
 
+        if (targetFunction == null) {
+            return;
+        }
         while (timeHistory.size() > timeHistoryMaxLength) {
             timeHistory.removeFirst();
         }
@@ -54,38 +58,7 @@ public abstract class DisbalanceMinimizer {
 
     private double calcMaxV_t(CompiledOrderBook ob) {
 
-        double deltaAmount;
-        double maxV_t = 0;
-
-        int askInd = 0;
-        int bidInd = 0;
-
-        while ((askInd < ob.getAsks().size()) && (bidInd < ob.getBids().size())
-                && (ob.getAsks().get(askInd).getPrice() < ob.getBids().get(bidInd).getPrice())) {
-
-
-            double bidAmount = ob.getBids().get(bidInd).getAmount();
-            double askAmount = ob.getAsks().get(askInd).getAmount();
-
-            if (askAmount > bidAmount) {
-                deltaAmount = bidAmount;
-                bidInd++;
-                ob.getAsks().get(askInd).setAmount(askAmount - deltaAmount);
-            }
-            else if (askAmount < bidAmount) {
-                deltaAmount = askAmount;
-                askInd++;
-                ob.getBids().get(bidInd).setAmount(bidAmount - deltaAmount);
-            }
-            else {
-                deltaAmount = askAmount;
-                askInd++;
-                bidInd++;
-            }
-            maxV_t += deltaAmount;
-        }
-
-        return maxV_t;
+        return Util.calculateOBOverlapAmount(ob.getAsks(), ob.getBids());
     }
 
 

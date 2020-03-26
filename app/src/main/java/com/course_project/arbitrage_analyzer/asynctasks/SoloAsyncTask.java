@@ -11,6 +11,10 @@ import com.course_project.arbitrage_analyzer.model.OrderBookGetter;
 import com.course_project.arbitrage_analyzer.model.OutputDataSet;
 import com.course_project.arbitrage_analyzer.model.PriceAmountPair;
 import com.course_project.arbitrage_analyzer.model.SettingsContainer;
+import com.course_project.arbitrage_analyzer.model.disbalance_minimization.DisbalanceEstimator;
+import com.course_project.arbitrage_analyzer.model.disbalance_minimization.MinimizerResult;
+import com.course_project.arbitrage_analyzer.model.disbalance_minimization.minimizers.DisbalanceMinimizer;
+import com.course_project.arbitrage_analyzer.model.disbalance_minimization.minimizers.SimpleMinimizer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,11 +77,20 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
         }
     }
 
-    //Calculate the profit
-    private OutputDataSet formOutputDataSet() {
+    private OutputDataSet analyzeMarkets() {
+        DisbalanceMinimizer minimizer = new SimpleMinimizer();
+        DisbalanceEstimator estimator = new DisbalanceEstimator();
 
         //Get orderBook with top orders from all markets.
-        CompiledOrderBook orderBook = orderBookGetter.getCompiledOrderBook(settings);
+        CompiledOrderBook orderBook = orderBookGetter.getCompiledOrderBook(settings, true);
+        MinimizerResult minResult = minimizer.getResult(orderBook);
+        CompiledOrderBook actualOrderBook = orderBookGetter.getCompiledOrderBook(settings, false);
+        double realV = estimator.getEstimate(actualOrderBook, minResult.getResultOrderBook());
+
+        return formOutputDataSet(orderBook, minResult.getOptimalV(), realV);
+    }
+
+    private OutputDataSet formOutputDataSet(CompiledOrderBook orderBook, double optimalV, double realV) {
 
         Double profit = 0.0; //Profit that we can get.
         Double firstCurrencyAmount = 0.0;
@@ -87,35 +100,23 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
         ArrayList<Double> amountPoints = new ArrayList<>();
         //List of deals to make.
         ArrayList<Deal> deals = new ArrayList<>(); //List of deals that should be made.
-        final double alpha = 0.1;
-        Double optimalSecondCurrencyAmount = 0.0;
-        Double optimalFirstCurrencyAmount = 0.0;
-        Double optimalProfit = 0.0;
-        Integer num = -1;   //Number of deals to make.
-        Double curK; //Current K.
+        double optimalFirstCurrencyAmount = 0.0;
+        double optimalProfit = 0.0;
 
-        ArrayList<Double> bitAmountPoints = new ArrayList<>();
-        ArrayList<Double> askAmountPoints = new ArrayList<>();
-        ArrayList<Double> bidPricePoints = new ArrayList<>();
-        ArrayList<Double> askPricePoints = new ArrayList<>();
+        double realFirstCurrencyAmount = 0.0;
+        double realProfit = 0.0;
 
-        Double prevAmount = 0.0;
-        Double prevProfit = 0.0;
-        Double firstK = -1.0; //First value of K.
+        boolean optimalPointPassed = false;
         //iterators.
         int bx = 0, ax = 0;
 
         OutputDataSet outputDataSet = new OutputDataSet();
-
-        fillAskBidChartPoints(bitAmountPoints, askAmountPoints, bidPricePoints, askPricePoints,
-                orderBook);
 
         while ((ax < orderBook.getAsks().size())
                 && (bx < orderBook.getBids().size())
                 //While we can make profit from the deal.
                 && (orderBook.getBids().get(bx).getPrice() > orderBook.getAsks().get(ax).getPrice())) {
 
-            num += 1;
 
             Double bidAmount = orderBook.getBids().get(bx).getAmount(); //Amount of top bid.
             Double askAmount = orderBook.getAsks().get(ax).getAmount(); //Amount of top ask.
@@ -130,6 +131,24 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
             //Amount of currency to buy (sell).
             Double m = Math.min(bidAmount, askAmount);
 
+            //Check if we have achieved the optimal point.
+            if (secondCurrencyAmount + orderBook.getAsks().get(ax).getPrice() * m >= optimalV) {
+
+                optimalPointPassed = true;
+                double delta = secondCurrencyAmount + orderBook.getAsks().get(ax).getPrice() * m - optimalV;
+                optimalFirstCurrencyAmount = firstCurrencyAmount + m - delta;
+                optimalProfit = profit + (orderBook.getBids().get(bx).getPrice()
+                        - orderBook.getAsks().get(ax).getPrice()) * (m-delta);
+            }
+
+            if (secondCurrencyAmount + orderBook.getAsks().get(ax).getPrice() * m >= realV) {
+
+                double delta = secondCurrencyAmount + orderBook.getAsks().get(ax).getPrice() * m - realV;
+                realFirstCurrencyAmount = firstCurrencyAmount + m - delta;
+                realProfit = profit + (orderBook.getBids().get(bx).getPrice()
+                        - orderBook.getAsks().get(ax).getPrice()) * (m-delta);
+            }
+
             Double currentProfit = (orderBook.getBids().get(bx).getPrice()
                     - orderBook.getAsks().get(ax).getPrice()) * m;
 
@@ -140,37 +159,38 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
             profitPoints.add(profit);
             amountPoints.add(secondCurrencyAmount);
 
-            deals.add(new Deal(DealType.BUY, orderBook.getAsks().get(ax).getMarketName()
-                    , m, orderBook.getAsks().get(ax).getPrice()));
-            deals.add(new Deal(DealType.SELL, orderBook.getBids().get(bx).getMarketName()
-                    , m, orderBook.getBids().get(bx).getPrice()));
+            if (!optimalPointPassed) {
+                deals.add(new Deal(DealType.BUY, orderBook.getAsks().get(ax).getMarketName()
+                        , m, orderBook.getAsks().get(ax).getPrice()));
+                deals.add(new Deal(DealType.SELL, orderBook.getBids().get(bx).getMarketName()
+                        , m, orderBook.getBids().get(bx).getPrice()));
+            }
 
             //Take into account that we have made a deal and top bid and ask are changed.
             Double oldBidAmount = orderBook.getBids().get(bx).getAmount();
             Double oldAskAmount = orderBook.getAsks().get(ax).getAmount();
             orderBook.getBids().get(bx).setAmount(oldBidAmount - m);
             orderBook.getAsks().get(ax).setAmount(oldAskAmount - m);
-
-            //Check if we have achieved the optimal point.
-            if (num.equals(2)) {
-                firstK = (profit - prevProfit) / (secondCurrencyAmount - prevAmount);
-            } else if (num > 1) {
-                curK = (profit - prevProfit) / (secondCurrencyAmount - prevAmount);
-                if (curK / firstK >= alpha) {
-                    optimalSecondCurrencyAmount = secondCurrencyAmount;
-                    optimalFirstCurrencyAmount = firstCurrencyAmount;
-                    optimalProfit = profit;
-                }
-            }
-            prevAmount = secondCurrencyAmount;
-            prevProfit = profit;
         }
+
+        ArrayList<Double> bitAmountPoints = new ArrayList<>();
+        ArrayList<Double> askAmountPoints = new ArrayList<>();
+        ArrayList<Double> bidPricePoints = new ArrayList<>();
+        ArrayList<Double> askPricePoints = new ArrayList<>();
+
+        fillAskBidChartPoints(bitAmountPoints, askAmountPoints, bidPricePoints, askPricePoints,
+                orderBook);
 
         //Put data into the resulting data set.
         outputDataSet.setProfit(profit);
-        outputDataSet.setOptimalSecondCurrencyAmount(optimalSecondCurrencyAmount);
+        outputDataSet.setOptimalSecondCurrencyAmount(optimalV);
         outputDataSet.setOptimalFirstCurrencyAmount(optimalFirstCurrencyAmount);
         outputDataSet.setOptimalProfit(optimalProfit);
+
+        outputDataSet.setRealFirstCurrencyAmount(realFirstCurrencyAmount);
+        outputDataSet.setRealSecondCurrencyAmount(realV);
+        outputDataSet.setRealProfit(realProfit);
+
         outputDataSet.setAmountPoints(amountPoints);
         outputDataSet.setProfitPoints(profitPoints);
         outputDataSet.setDeals(deals);
@@ -197,7 +217,7 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
 
         while (!isCancelled()) {
 
-            OutputDataSet outputDataSet = formOutputDataSet();
+            OutputDataSet outputDataSet = analyzeMarkets();
 
             //Display data.
             publishProgress(outputDataSet);

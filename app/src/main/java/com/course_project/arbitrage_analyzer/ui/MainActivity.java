@@ -163,6 +163,8 @@ public class MainActivity extends AppCompatActivity implements ArbitrageView {
         //Make a DataSet with optimal point.
         float optimalAmount = lastOutputDataSet.getOptimalSecondCurrencyAmount().floatValue();
         float optimalProfit = lastOutputDataSet.getOptimalProfit().floatValue();
+        float realAmount = lastOutputDataSet.getRealSecondCurrencyAmount().floatValue();
+        float realProfit = lastOutputDataSet.getRealProfit().floatValue();
 
         List<Entry> optimalChartEntries = new ArrayList<>();
         optimalChartEntries.add(new Entry(optimalAmount, optimalProfit));
@@ -171,9 +173,17 @@ public class MainActivity extends AppCompatActivity implements ArbitrageView {
         ds2.setColor(R.color.colorPrimaryDark);
         ds2.setCircleColors(getResources().getColor(R.color.diagramCircleOptimal));
 
-        LineDataSet[] lineDataSets = new LineDataSet[2];
+        List<Entry> realChartEntries = new ArrayList<>();
+        realChartEntries.add(new Entry(realAmount, realProfit));
+        LineDataSet ds3 = new LineDataSet(realChartEntries, "");
+
+        ds3.setColor(R.color.colorPrimaryDark);
+        ds3.setCircleColors(getResources().getColor(R.color.diagramCircleReal));
+
+        LineDataSet[] lineDataSets = new LineDataSet[3];
         lineDataSets[0] = ds;
         lineDataSets[1] = ds2;
+        lineDataSets[2] = ds3;
         LineData ld = new LineData(lineDataSets);
 
         chart.setData(ld);
@@ -199,7 +209,6 @@ public class MainActivity extends AppCompatActivity implements ArbitrageView {
                     , lastOutputDataSet.getBidAmountPoints().get(i).floatValue()));
         }
         //////////////////////////////////////////////////////////
-        Log.e(LOGTAG, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
         ArrayList<Float> xesAsk = new ArrayList<>();
         ArrayList<Float> yesAsk = new ArrayList<>();
         ArrayList<Float> xesBid = new ArrayList<>();

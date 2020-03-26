@@ -433,7 +433,7 @@ public class OrderBookGetter {
     }*/
 
     //Get Order books from all markets and unite them into one.
-    public CompiledOrderBook getCompiledOrderBook(SettingsContainer settings) {
+    public CompiledOrderBook getCompiledOrderBook(SettingsContainer settings, boolean showProgress) {
 
         boolean bitfinex = settings.getBitfinex();
         boolean cex = settings.getCex();
@@ -460,27 +460,35 @@ public class OrderBookGetter {
 
         if (bitfinex) {
             processedExchangeCount++;
-            progressListener.onUpdateOrderBookGetterProgress(
-                    Math.round(100*processedExchangeCount/exchangeCount));
+            if (showProgress) {
+                progressListener.onUpdateOrderBookGetterProgress(
+                        Math.round(100 * processedExchangeCount / exchangeCount));
+            }
             //Add all it's orders into the order book.
             result.addAll(getBitfinexCleanOrderBook(limit, currencyPair));
         }
         if (cex) {
             processedExchangeCount++;
-            progressListener.onUpdateOrderBookGetterProgress(
-                    Math.round(100*processedExchangeCount/exchangeCount));
+            if (showProgress) {
+                progressListener.onUpdateOrderBookGetterProgress(
+                        Math.round(100 * processedExchangeCount / exchangeCount));
+            }
             result.addAll(getCexPartCleanOrderBook(limit, currencyPair));
         }
         if (exmo) {
             processedExchangeCount++;
-            progressListener.onUpdateOrderBookGetterProgress(
-                    Math.round(100*processedExchangeCount/exchangeCount));
+            if (showProgress) {
+                progressListener.onUpdateOrderBookGetterProgress(
+                        Math.round(100 * processedExchangeCount / exchangeCount));
+            }
             result.addAll(getExmoCleanOrderBook(limit, currencyPair));
         }
         if (gdax) {
             processedExchangeCount++;
-            progressListener.onUpdateOrderBookGetterProgress(
-                    Math.round(100*processedExchangeCount/exchangeCount));
+            if (showProgress) {
+                progressListener.onUpdateOrderBookGetterProgress(
+                        Math.round(100 * processedExchangeCount / exchangeCount));
+            }
             result.addAll(getGdaxTop50CleanOrderBook(currencyPair));
         }
         /*if (sp.getBoolean("kucoin", true)) {
@@ -491,7 +499,9 @@ public class OrderBookGetter {
         //Asks sorted in ascending order by price.
         result.sort();
 
-        progressListener.onUpdateOrderBookGetterProgress(0);
+        if (showProgress) {
+            progressListener.onUpdateOrderBookGetterProgress(0);
+        }
 
         /* Gson gson = new Gson();
         largeLog(LOGTAG, gson.toJson(result)); */
