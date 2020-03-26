@@ -74,7 +74,10 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
     }
 
     //Calculate the profit
-    private OutputDataSet formOutputDataSet(CompiledOrderBook orderBook) {
+    private OutputDataSet formOutputDataSet() {
+
+        //Get orderBook with top orders from all markets.
+        CompiledOrderBook orderBook = orderBookGetter.getCompiledOrderBook(settings);
 
         Double profit = 0.0; //Profit that we can get.
         Double firstCurrencyAmount = 0.0;
@@ -194,10 +197,7 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
 
         while (!isCancelled()) {
 
-            //Get orderBook with top orders from all markets.
-            CompiledOrderBook orderBook = orderBookGetter.getCompiledOrderBook(settings);
-
-            OutputDataSet outputDataSet = formOutputDataSet(orderBook);
+            OutputDataSet outputDataSet = formOutputDataSet();
 
             //Display data.
             publishProgress(outputDataSet);

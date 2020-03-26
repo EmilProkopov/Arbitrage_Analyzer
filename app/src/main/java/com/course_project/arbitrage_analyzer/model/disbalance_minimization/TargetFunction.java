@@ -15,8 +15,8 @@ public class TargetFunction {
         return riskConst * v_0 + (1-riskConst) * Math.max(v_t-v_0, 0);
     }
 
-    TargetFunction(double riscConst, double alpha, double sigma) {
-        this.riskConst = riscConst;
+    TargetFunction(double riskConst, double alpha, double sigma) {
+        this.riskConst = riskConst;
         this.alpha = alpha;
         this.sigma = sigma;
     }

@@ -1,20 +1,35 @@
-package com.course_project.arbitrage_analyzer.model.disbalance_minimization;
+package com.course_project.arbitrage_analyzer.model.disbalance_minimization.minimizers;
 
 import com.course_project.arbitrage_analyzer.model.CompiledOrderBook;
+import com.course_project.arbitrage_analyzer.model.disbalance_minimization.MinimizerResult;
+import com.course_project.arbitrage_analyzer.model.disbalance_minimization.TargetFunction;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class DisbalanceMinimizer {
 
     private TargetFunction targetFunction;
-
+    private double tradeRatePerSecond;
     private short maxRoundsCount;
+    private short timeHistoryMaxLength;
 
-    DisbalanceMinimizer(TargetFunction targetFunction, short maxRoundsCount) {
+    private List<Double> timeHistory;
+
+    DisbalanceMinimizer(TargetFunction targetFunction, short maxRoundsCount, short timeHistoryMaxLength) {
         this.targetFunction = targetFunction;
         this.maxRoundsCount = maxRoundsCount;
+        this.timeHistory = new ArrayList<>();
+        this.timeHistoryMaxLength = timeHistoryMaxLength;
     }
 
 
     abstract double findOptimalV(CompiledOrderBook ob, double maxV_t);
+
+
+    private void updateTargetFunctionParams() {
+        
+    }
 
 
     private double calcMaxV_t(CompiledOrderBook ob) {
@@ -54,7 +69,8 @@ public abstract class DisbalanceMinimizer {
     }
 
 
-    private CompiledOrderBook genNewOrderBook(CompiledOrderBook oldOB, double optimalV) {
+    private CompiledOrderBook createUserOrderBook(CompiledOrderBook oldOB, double optimalV) {
+        //
         return new CompiledOrderBook();
     }
 
@@ -64,10 +80,10 @@ public abstract class DisbalanceMinimizer {
 
         long startTime = System.nanoTime();
         double optimalV = findOptimalV(ob, maxV_t);
-        CompiledOrderBook newOB = genNewOrderBook(ob, optimalV);
+        CompiledOrderBook userOB = createUserOrderBook(ob, optimalV);
         long time = System.nanoTime() - startTime;
 
-        return new MinimizerResult(optimalV, time, newOB);
+        return new MinimizerResult(optimalV, time, userOB);
     }
 
 
@@ -81,5 +97,13 @@ public abstract class DisbalanceMinimizer {
 
     public void setMaxRoundsCount(short maxRoundsCount) {
         this.maxRoundsCount = maxRoundsCount;
+    }
+
+    public double getTradeRatePerSecond() {
+        return tradeRatePerSecond;
+    }
+
+    public void setTradeRatePerSecond(double tradeRatePerSecond) {
+        this.tradeRatePerSecond = tradeRatePerSecond;
     }
 }
