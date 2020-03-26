@@ -4,8 +4,8 @@ import com.course_project.arbitrage_analyzer.model.CompiledOrderBook;
 import com.course_project.arbitrage_analyzer.model.disbalance_minimization.MinimizerResult;
 import com.course_project.arbitrage_analyzer.model.disbalance_minimization.TargetFunction;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedList;
+import java.util.ListIterator;
 
 public abstract class DisbalanceMinimizer {
 
@@ -14,12 +14,12 @@ public abstract class DisbalanceMinimizer {
     private short maxRoundsCount;
     private short timeHistoryMaxLength;
 
-    private List<Double> timeHistory;
+    private LinkedList<Long> timeHistory;
 
     DisbalanceMinimizer(TargetFunction targetFunction, short maxRoundsCount, short timeHistoryMaxLength) {
         this.targetFunction = targetFunction;
         this.maxRoundsCount = maxRoundsCount;
-        this.timeHistory = new ArrayList<>();
+        this.timeHistory = new LinkedList<>();
         this.timeHistoryMaxLength = timeHistoryMaxLength;
     }
 
@@ -28,7 +28,27 @@ public abstract class DisbalanceMinimizer {
 
 
     private void updateTargetFunctionParams() {
-        
+
+        while (timeHistory.size() > timeHistoryMaxLength) {
+            timeHistory.removeFirst();
+        }
+
+        double sampleMean = 0;
+        ListIterator<Long> iterator = timeHistory.listIterator();
+        while (iterator.hasNext()) {
+            sampleMean += iterator.next() / (10e9 * timeHistory.size());
+        }
+
+        double sampleVariance = 0;
+        iterator = timeHistory.listIterator();
+        double tmp;
+        while (iterator.hasNext()) {
+            tmp = iterator.next() / 10e9;
+            sampleVariance +=  (tmp - sampleMean)*(tmp - sampleMean)/ timeHistory.size();
+        }
+
+        this.targetFunction.setAlpha(sampleMean);
+        this.targetFunction.setSigma(sampleVariance);
     }
 
 
@@ -82,8 +102,14 @@ public abstract class DisbalanceMinimizer {
         double optimalV = findOptimalV(ob, maxV_t);
         CompiledOrderBook userOB = createUserOrderBook(ob, optimalV);
         long time = System.nanoTime() - startTime;
+        timeHistory.addLast(time);
+        updateTargetFunctionParams();
 
         return new MinimizerResult(optimalV, time, userOB);
+    }
+
+    public void cleanTimeHistory() {
+        this.timeHistory = new LinkedList<>();
     }
 
 
