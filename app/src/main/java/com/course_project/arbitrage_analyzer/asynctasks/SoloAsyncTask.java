@@ -143,17 +143,23 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
 
                 optimalPointPassed = true;
                 double delta = secondCurrencyAmount + orderBook.getAsks().get(ax).getPrice() * m - optimalV;
-                optimalFirstCurrencyAmount = firstCurrencyAmount + m - delta;
-                optimalProfit = profit + (orderBook.getBids().get(bx).getPrice()
-                        - orderBook.getAsks().get(ax).getPrice()) * (m-delta);
+                //optimalFirstCurrencyAmount = firstCurrencyAmount + m - delta;
+                //optimalProfit = profit + (orderBook.getBids().get(bx).getPrice()
+                //        - orderBook.getAsks().get(ax).getPrice()) * (m-delta);
+                optimalFirstCurrencyAmount = firstCurrencyAmount;
+                optimalProfit = profit;
+
             }
 
             if (secondCurrencyAmount + orderBook.getAsks().get(ax).getPrice() * m >= realV) {
 
                 double delta = secondCurrencyAmount + orderBook.getAsks().get(ax).getPrice() * m - realV;
-                realFirstCurrencyAmount = firstCurrencyAmount + m - delta;
-                realProfit = profit + (orderBook.getBids().get(bx).getPrice()
-                        - orderBook.getAsks().get(ax).getPrice()) * (m-delta);
+                //realFirstCurrencyAmount = firstCurrencyAmount + m - delta;
+                //realProfit = profit + (orderBook.getBids().get(bx).getPrice()
+                //        - orderBook.getAsks().get(ax).getPrice()) * (m-delta);
+                realFirstCurrencyAmount = firstCurrencyAmount;
+                realProfit = profit;
+
             }
 
             Double currentProfit = (orderBook.getBids().get(bx).getPrice()
