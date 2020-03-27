@@ -1,11 +1,20 @@
 package com.course_project.arbitrage_analyzer.model;
 
 //Stores information about one bid/ask.
-public class PriceAmountPair {
+public class PriceAmountPair implements Cloneable {
 
     private Double price;
     private Double amount;
     private String marketName;
+
+    public Object clone() {
+
+        PriceAmountPair copy = new PriceAmountPair();
+        copy.setAmount(amount);
+        copy.setPrice(price);
+        copy.setMarketName(marketName);
+        return copy;
+    }
 
     public Double getPrice() {return price;}
 

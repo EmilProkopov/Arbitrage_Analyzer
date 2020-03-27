@@ -7,7 +7,7 @@ import java.util.Comparator;
 import java.util.List;
 
 //Array of asks, array of bids and some methods to work with them.
-public class CompiledOrderBook {
+public class CompiledOrderBook implements Cloneable {
 
     private List<PriceAmountPair> bids;
     private List<PriceAmountPair> asks;
@@ -15,6 +15,24 @@ public class CompiledOrderBook {
     public CompiledOrderBook() {
         bids = new ArrayList<>();
         asks = new ArrayList<>();
+    }
+
+    public Object clone() throws CloneNotSupportedException {
+
+        super.clone();
+        CompiledOrderBook copy = new CompiledOrderBook();
+
+        List<PriceAmountPair> newBids = new ArrayList<>();
+        List<PriceAmountPair> newAsks = new ArrayList<>();
+        for (PriceAmountPair pair : this.bids) {
+            newBids.add((PriceAmountPair) pair.clone());
+        }
+        for (PriceAmountPair pair : this.asks) {
+            newAsks.add((PriceAmountPair) pair.clone());
+        }
+        copy.setBids(newBids);
+        copy.setAsks(newAsks);
+        return copy;
     }
 
     public List<PriceAmountPair> getBids() {return bids;}

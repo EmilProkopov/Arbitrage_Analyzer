@@ -83,7 +83,14 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
 
         //Get orderBook with top orders from all markets.
         CompiledOrderBook orderBook = orderBookGetter.getCompiledOrderBook(settings, true);
-        MinimizerResult minResult = minimizer.getResult(orderBook);
+        CompiledOrderBook orderBookCopy = new CompiledOrderBook();
+        try {
+            orderBookCopy = (CompiledOrderBook) orderBook.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+
+        MinimizerResult minResult = minimizer.getResult(orderBookCopy);
         CompiledOrderBook actualOrderBook = orderBookGetter.getCompiledOrderBook(settings, false);
         double realV = estimator.getEstimate(actualOrderBook, minResult.getResultOrderBook());
 
