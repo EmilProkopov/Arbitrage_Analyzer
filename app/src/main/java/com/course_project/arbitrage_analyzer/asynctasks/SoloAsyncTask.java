@@ -142,24 +142,25 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
             if (secondCurrencyAmount + orderBook.getAsks().get(ax).getPrice() * m >= optimalV) {
 
                 optimalPointPassed = true;
-                double delta = secondCurrencyAmount + orderBook.getAsks().get(ax).getPrice() * m - optimalV;
-                //optimalFirstCurrencyAmount = firstCurrencyAmount + m - delta;
-                //optimalProfit = profit + (orderBook.getBids().get(bx).getPrice()
-                //        - orderBook.getAsks().get(ax).getPrice()) * (m-delta);
-                optimalFirstCurrencyAmount = firstCurrencyAmount;
-                optimalProfit = profit;
+                double deltaSecond = secondCurrencyAmount + orderBook.getAsks().get(ax).getPrice() * m - optimalV;
+                double deltaFirst = deltaSecond / orderBook.getAsks().get(ax).getPrice();
+                optimalFirstCurrencyAmount = firstCurrencyAmount + deltaFirst;
+                optimalProfit = profit + (orderBook.getBids().get(bx).getPrice()
+                        - orderBook.getAsks().get(ax).getPrice()) * deltaFirst;
 
+                deals.add(new Deal(DealType.BUY, orderBook.getAsks().get(ax).getMarketName()
+                        , deltaFirst, orderBook.getAsks().get(ax).getPrice()));
+                deals.add(new Deal(DealType.SELL, orderBook.getBids().get(bx).getMarketName()
+                        , deltaFirst, orderBook.getBids().get(bx).getPrice()));
             }
 
             if (secondCurrencyAmount + orderBook.getAsks().get(ax).getPrice() * m >= realV) {
 
-                double delta = secondCurrencyAmount + orderBook.getAsks().get(ax).getPrice() * m - realV;
-                //realFirstCurrencyAmount = firstCurrencyAmount + m - delta;
-                //realProfit = profit + (orderBook.getBids().get(bx).getPrice()
-                //        - orderBook.getAsks().get(ax).getPrice()) * (m-delta);
-                realFirstCurrencyAmount = firstCurrencyAmount;
-                realProfit = profit;
-
+                double deltaSecond = secondCurrencyAmount + orderBook.getAsks().get(ax).getPrice() * m - realV;
+                double deltaFirst = deltaSecond / orderBook.getAsks().get(ax).getPrice();
+                realFirstCurrencyAmount = firstCurrencyAmount + deltaFirst;
+                realProfit = profit + (orderBook.getBids().get(bx).getPrice()
+                        - orderBook.getAsks().get(ax).getPrice()) * deltaFirst;
             }
 
             Double currentProfit = (orderBook.getBids().get(bx).getPrice()

@@ -4,7 +4,7 @@ import java.util.List;
 
 public class Util {
 
-    public static double calculateOBOverlapAmount(List<PriceAmountPair> asks, List<PriceAmountPair> bids) {
+    public static double calculateOBOverlapV(List<PriceAmountPair> asks, List<PriceAmountPair> bids) {
         double deltaAmount;
         double maxV_t = 0;
 

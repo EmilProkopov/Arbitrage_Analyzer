@@ -1,7 +1,5 @@
 package com.course_project.arbitrage_analyzer.arbitrage;
 
-import android.util.Log;
-
 import com.course_project.arbitrage_analyzer.interfaces.ArbitrageModel;
 import com.course_project.arbitrage_analyzer.interfaces.ArbitragePresenter;
 import com.course_project.arbitrage_analyzer.interfaces.ArbitrageView;
@@ -80,7 +78,6 @@ public class ArbitragePresenterImpl implements ArbitragePresenter,
     @Override
     public void onWorkerResult(OutputDataSet dataSet) {
         view.updateData(dataSet);
-        Log.e(LOGTAG, "onWorkerResult");
     }
 
 }

@@ -7,13 +7,17 @@ public class PriceAmountPair implements Cloneable {
     private Double amount;
     private String marketName;
 
-    public Object clone() {
+    public PriceAmountPair() {}
 
-        PriceAmountPair copy = new PriceAmountPair();
-        copy.setAmount(amount);
-        copy.setPrice(price);
-        copy.setMarketName(marketName);
-        return copy;
+    public PriceAmountPair(double price, double amount, String marketName) {
+        this.price = price;
+        this.amount = amount;
+        this.marketName = marketName;
+    }
+
+    public PriceAmountPair clone() {
+
+        return new PriceAmountPair(price, amount, marketName);
     }
 
     public Double getPrice() {return price;}
