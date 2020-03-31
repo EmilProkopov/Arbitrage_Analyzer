@@ -66,6 +66,9 @@ public class SimpleMinimizer extends DisbalanceMinimizer {
             prevAmount = secondCurrencyAmount;
             prevProfit = profit;
         }
+        if (optimalV == -1) {
+            optimalV = secondCurrencyAmount;
+        }
         return optimalV;
     }
 }

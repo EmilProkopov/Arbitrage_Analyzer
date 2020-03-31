@@ -73,7 +73,6 @@ public abstract class DisbalanceMinimizer {
         List<PriceAmountPair> asks = oldOB.getAsks();
         List<PriceAmountPair> bids = oldOB.getBids();
 
-        double deltaAmount;
         double curV_t = 0;
 
         int askInd = 0;
@@ -116,6 +115,23 @@ public abstract class DisbalanceMinimizer {
 
         // What to do if overlap optimalV
         CompiledOrderBook userOB = new CompiledOrderBook();
+
+        double minAskPrice = userAsks.get(0).getPrice();
+        for (PriceAmountPair order: userAsks) {
+            minAskPrice = Math.min(minAskPrice, order.getPrice());
+        }
+        for (PriceAmountPair order: userAsks) {
+            order.setPrice(minAskPrice);
+        }
+
+        double maxBidPrice = userBids.get(0).getPrice();
+        for (PriceAmountPair order: userBids) {
+            maxBidPrice = Math.max(maxBidPrice, order.getPrice());
+        }
+        for (PriceAmountPair order: userBids) {
+            order.setPrice(maxBidPrice);
+        }
+
         userOB.setBids(userBids);
         userOB.setAsks(userAsks);
 
@@ -125,14 +141,8 @@ public abstract class DisbalanceMinimizer {
 
     public MinimizerResult getResult(CompiledOrderBook ob) {
 
-        CompiledOrderBook obCopy1 = new CompiledOrderBook();
-        CompiledOrderBook obCopy2 = new CompiledOrderBook();
-        try {
-            obCopy1 = (CompiledOrderBook) ob.clone();
-            obCopy2 = (CompiledOrderBook) ob.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
+        CompiledOrderBook obCopy1 = ob.clone();
+        CompiledOrderBook obCopy2 = ob.clone();
         double maxV_t = calcMaxV_t(obCopy1);
 
         long startTime = System.nanoTime();

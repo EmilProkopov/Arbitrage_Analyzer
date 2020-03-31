@@ -17,18 +17,17 @@ public class CompiledOrderBook implements Cloneable {
         asks = new ArrayList<>();
     }
 
-    public Object clone() throws CloneNotSupportedException {
+    public CompiledOrderBook clone() {
 
-        super.clone();
         CompiledOrderBook copy = new CompiledOrderBook();
 
         List<PriceAmountPair> newBids = new ArrayList<>();
         List<PriceAmountPair> newAsks = new ArrayList<>();
         for (PriceAmountPair pair : this.bids) {
-            newBids.add((PriceAmountPair) pair.clone());
+            newBids.add(pair.clone());
         }
         for (PriceAmountPair pair : this.asks) {
-            newAsks.add((PriceAmountPair) pair.clone());
+            newAsks.add(pair.clone());
         }
         copy.setBids(newBids);
         copy.setAsks(newAsks);

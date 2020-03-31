@@ -50,13 +50,33 @@ public class DisbalanceEstimator {
         return obList;
     }
 
+    private List<CompiledOrderBook> splitByOrderType(List<CompiledOrderBook> list) {
+
+        List<CompiledOrderBook> newList = new ArrayList<>();
+        for (CompiledOrderBook curOB : list) {
+            if (curOB.getBids().size() > 0) {
+                CompiledOrderBook newOB = new CompiledOrderBook();
+                newOB.setBids(curOB.getBids());
+                newList.add(newOB);
+            }
+            if (curOB.getAsks().size() > 0) {
+                CompiledOrderBook newOB = new CompiledOrderBook();
+                newOB.setAsks(curOB.getAsks());
+                newList.add(newOB);
+            }
+        }
+        return newList;
+    }
+
     // Returns sum of amounts of orders that do overlap
-    public double getEstimate(CompiledOrderBook actualOrderBook, CompiledOrderBook userOrders) {
+    public EstimatorResult getEstimate(CompiledOrderBook actualOrderBook, CompiledOrderBook userOrders) {
 
-        List<CompiledOrderBook> actualOBList = splitOBbyMarketNames(actualOrderBook);
-        List<CompiledOrderBook> userOBList = splitOBbyMarketNames(userOrders);
+        List<CompiledOrderBook> actualOBList = splitByOrderType(splitOBbyMarketNames(actualOrderBook));
+        List<CompiledOrderBook> userOBList = splitByOrderType(splitOBbyMarketNames(userOrders));
 
-        double res = 0.0;
+        double firstCurrBidsAmount = 0.0;
+        double firstCurrAsksAmount = 0.0;
+        double secondCurV = 0.0;
 
         for (CompiledOrderBook curActualOB : actualOBList) {
             for (CompiledOrderBook curUserOB : userOBList) {
@@ -83,12 +103,14 @@ public class DisbalanceEstimator {
 
                     curActualOB.sort();
                     curUserOB.sort();
-                    res += Util.calculateOBOverlapV(curActualOB.getAsks(), curUserOB.getBids());
-                    res += Util.calculateOBOverlapV(curUserOB.getAsks(), curActualOB.getBids());
+                    secondCurV += Util.calculateOBOverlapV(curActualOB.getAsks(), curUserOB.getBids());
+
+                    firstCurrAsksAmount += Util.calculateOBOverlapAmount(curActualOB.getAsks(), curUserOB.getBids());
+                    firstCurrBidsAmount += Util.calculateOBOverlapAmount(curUserOB.getAsks(), curActualOB.getBids());
                 }
             }
         }
 
-        return res;
+        return new EstimatorResult(Math.abs(firstCurrAsksAmount-firstCurrBidsAmount), secondCurV);
     }
 }

@@ -12,6 +12,7 @@ import com.course_project.arbitrage_analyzer.model.OutputDataSet;
 import com.course_project.arbitrage_analyzer.model.PriceAmountPair;
 import com.course_project.arbitrage_analyzer.model.SettingsContainer;
 import com.course_project.arbitrage_analyzer.model.disbalance_minimization.DisbalanceEstimator;
+import com.course_project.arbitrage_analyzer.model.disbalance_minimization.EstimatorResult;
 import com.course_project.arbitrage_analyzer.model.disbalance_minimization.MinimizerResult;
 import com.course_project.arbitrage_analyzer.model.disbalance_minimization.minimizers.DisbalanceMinimizer;
 import com.course_project.arbitrage_analyzer.model.disbalance_minimization.minimizers.SimpleMinimizer;
@@ -83,23 +84,20 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
 
         //Get orderBook with top orders from all markets.
         CompiledOrderBook orderBook = orderBookGetter.getCompiledOrderBook(settings, true);
-        CompiledOrderBook orderBookCopy = new CompiledOrderBook();
-        try {
-            orderBookCopy = (CompiledOrderBook) orderBook.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
+        // CompiledOrderBook orderBook = genTestOB1();
+        CompiledOrderBook orderBookCopy = orderBook.clone();
 
         MinimizerResult minResult = minimizer.getResult(orderBookCopy);
         CompiledOrderBook actualOrderBook = orderBookGetter.getCompiledOrderBook(settings, false);
-        double realV = estimator.getEstimate(actualOrderBook, minResult.getResultOrderBook());
+        // CompiledOrderBook actualOrderBook = genTestOB1();
+        EstimatorResult estimate = estimator.getEstimate(actualOrderBook, minResult.getResultOrderBook());
 
-        return formOutputDataSet(orderBook, minResult.getOptimalV(), realV);
+        return formOutputDataSet(orderBook, minResult.getOptimalV(), estimate.getUsedSecondCurrencyAmount());
     }
 
     private OutputDataSet formOutputDataSet(CompiledOrderBook orderBook, double optimalV, double realV) {
 
-        Double profit = 0.0; //Profit that we can get.
+        double profit = 0.0; //Profit that we can get.
         Double firstCurrencyAmount = 0.0;
         Double secondCurrencyAmount = 0.0;
         //Points of the plot.
@@ -142,7 +140,7 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
             if (secondCurrencyAmount + orderBook.getAsks().get(ax).getPrice() * m >= optimalV) {
 
                 optimalPointPassed = true;
-                double deltaSecond = secondCurrencyAmount + orderBook.getAsks().get(ax).getPrice() * m - optimalV;
+                double deltaSecond = optimalV - secondCurrencyAmount;
                 double deltaFirst = deltaSecond / orderBook.getAsks().get(ax).getPrice();
                 optimalFirstCurrencyAmount = firstCurrencyAmount + deltaFirst;
                 optimalProfit = profit + (orderBook.getBids().get(bx).getPrice()
@@ -156,7 +154,7 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
 
             if (secondCurrencyAmount + orderBook.getAsks().get(ax).getPrice() * m >= realV) {
 
-                double deltaSecond = secondCurrencyAmount + orderBook.getAsks().get(ax).getPrice() * m - realV;
+                double deltaSecond = realV - secondCurrencyAmount;
                 double deltaFirst = deltaSecond / orderBook.getAsks().get(ax).getPrice();
                 realFirstCurrencyAmount = firstCurrencyAmount + deltaFirst;
                 realProfit = profit + (orderBook.getBids().get(bx).getPrice()
@@ -268,4 +266,50 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
         super.onCancelled();
         this.presenter = null;
     }
+    /*
+    private CompiledOrderBook genTestOB1() {
+        CompiledOrderBook ob = new CompiledOrderBook();
+        double[] askAmounts = new double[] {10, 4, 2};
+        double[] askPrices = new double[] {2, 3, 4};
+        double[] bidAmounts = new double[] {5, 3, 1};
+        double[] bidPrices = new double[] {4, 3.1, 2};
+
+        List<PriceAmountPair> asks = new ArrayList<>();
+        List<PriceAmountPair> bids = new ArrayList<>();
+
+        for (int i = 0; i < askAmounts.length; ++i) {
+            asks.add(new PriceAmountPair(askPrices[i], askAmounts[i], "A"));
+        }
+        for (int i = 0; i < bidAmounts.length; ++i) {
+            bids.add(new PriceAmountPair(bidPrices[i], bidAmounts[i], "B"));
+        }
+
+        ob.setAsks(asks);
+        ob.setBids(bids);
+        ob.sort();
+        return ob;
+    }
+
+    private CompiledOrderBook genTestOB1() {
+        CompiledOrderBook ob = new CompiledOrderBook();
+        double[] askAmounts = new double[] {20, 10, 4, 2, 0.5};
+        double[] askPrices = new double[] {1, 2, 3, 4, 5};
+        double[] bidAmounts = new double[] {15, 5, 3, 1, 0.1};
+        double[] bidPrices = new double[] {5, 4, 3.1, 2, 1};
+
+        List<PriceAmountPair> asks = new ArrayList<>();
+        List<PriceAmountPair> bids = new ArrayList<>();
+
+        for (int i = 0; i < askAmounts.length; ++i) {
+            asks.add(new PriceAmountPair(askPrices[i], askAmounts[i], "A"));
+        }
+        for (int i = 0; i < bidAmounts.length; ++i) {
+            bids.add(new PriceAmountPair(bidPrices[i], bidAmounts[i], "B"));
+        }
+
+        ob.setAsks(asks);
+        ob.setBids(bids);
+        ob.sort();
+        return ob;
+    }*/
 }

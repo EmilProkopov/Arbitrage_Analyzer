@@ -187,7 +187,7 @@ public class MainActivity extends AppCompatActivity implements ArbitrageView {
         LineData ld = new LineData(lineDataSets);
 
         chart.setData(ld);
-        chart.getDescription().setText("Horizontal: price; Vertical: amount");
+        chart.getDescription().setText("Horizontal: amount; Vertical: profit");
         chart.getLegend().setEnabled(false);
         chart.getAxisLeft().setDrawLabels(false);
         chart.invalidate();
@@ -246,7 +246,7 @@ public class MainActivity extends AppCompatActivity implements ArbitrageView {
         LineData ld = new LineData(lineDataSets);
 
         chart.setData(ld);
-        chart.getDescription().setText("Horizontal: amount; Vertical: profit");
+        chart.getDescription().setText("Horizontal: price; Vertical: amount");
         chart.getLegend().setEnabled(false);
         chart.getAxisLeft().setDrawLabels(false);
         chart.invalidate();
