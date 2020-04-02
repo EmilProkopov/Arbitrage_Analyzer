@@ -57,7 +57,16 @@ public class Util {
         return maxV_t;
     }
 
-    public static double calculateOBOverlapAmount(List<PriceAmountPair> asksO, List<PriceAmountPair> bidsO) {
+
+    public static double calculateOBOverlapAmount(List<PriceAmountPair> asksO
+                                                , List<PriceAmountPair> bidsO) {
+        return calculateOBOverlapAmount(asksO, bidsO, false);
+    }
+
+
+    public static double calculateOBOverlapAmount(List<PriceAmountPair> asksO
+                                                , List<PriceAmountPair> bidsO
+                                                , boolean strictInequality) {
 
         List<PriceAmountPair> asks = clonePAPList(asksO);
         List<PriceAmountPair> bids = clonePAPList(bidsO);
@@ -71,6 +80,11 @@ public class Util {
         while ((askInd < asks.size()) && (bidInd < bids.size())
                 && (asks.get(askInd).getPrice() <= bids.get(bidInd).getPrice())) {
 
+            if (strictInequality) {
+                if (asks.get(askInd).getPrice() >= bids.get(bidInd).getPrice()) {
+                    break;
+                }
+            }
 
             double bidAmount = bids.get(bidInd).getAmount();
             double askAmount = asks.get(askInd).getAmount();

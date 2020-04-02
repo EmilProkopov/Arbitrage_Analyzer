@@ -266,7 +266,7 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
         super.onCancelled();
         this.presenter = null;
     }
-    /*
+/*
     private CompiledOrderBook genTestOB1() {
         CompiledOrderBook ob = new CompiledOrderBook();
         double[] askAmounts = new double[] {10, 4, 2};
@@ -311,5 +311,6 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
         ob.setBids(bids);
         ob.sort();
         return ob;
-    }*/
+    }
+*/
 }
