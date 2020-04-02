@@ -228,7 +228,7 @@ public class OrderBookGetter {
         ArrayList <PriceAmountPair> curAsks = new ArrayList<>();
         ArrayList <PriceAmountPair> curBids = new ArrayList<>();
 
-        if (currencyPair.equals("BCT/USD")) {
+        if (currencyPair.equals("BTC/USD")) {
 
             for (int i = 0; i < response.getBTCUSD().getAsk().size(); ++i) {
 

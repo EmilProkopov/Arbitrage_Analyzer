@@ -4,7 +4,7 @@ import com.course_project.arbitrage_analyzer.model.CompiledOrderBook;
 import com.course_project.arbitrage_analyzer.model.PriceAmountPair;
 import com.course_project.arbitrage_analyzer.model.Util;
 import com.course_project.arbitrage_analyzer.model.disbalance_minimization.MinimizerResult;
-import com.course_project.arbitrage_analyzer.model.disbalance_minimization.TargetFunction;
+import com.course_project.arbitrage_analyzer.model.disbalance_minimization.minimizers.target_functions.TargetFunction;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -13,10 +13,12 @@ import java.util.ListIterator;
 
 public abstract class DisbalanceMinimizer {
 
-    private TargetFunction targetFunction;
-    private double tradeRatePerSecond;
+    protected TargetFunction targetFunction;
+    private double tradeRatePerSecond = 1;
     private short maxRoundsCount;
     private short timeHistoryMaxLength;
+    private double alpha;
+    private double sigma;
 
     private LinkedList<Long> timeHistory;
 
@@ -29,6 +31,18 @@ public abstract class DisbalanceMinimizer {
 
 
     abstract double findOptimalV(CompiledOrderBook ob, double maxV_t);
+
+
+    private double gaussian(double x) {
+        return Math.exp(-(x - alpha)*(x - alpha) / (2 * sigma*sigma))
+                / (sigma * Math.sqrt(2*Math.PI));
+    }
+
+
+    protected double q(double v_t) {
+        double seconds = v_t / tradeRatePerSecond;
+        return gaussian(seconds);
+    }
 
 
     private void updateTargetFunctionParams() {
@@ -54,8 +68,8 @@ public abstract class DisbalanceMinimizer {
             sampleVariance +=  (tmp - sampleMean)*(tmp - sampleMean)/ timeHistory.size();
         }
 
-        this.targetFunction.setAlpha(sampleMean);
-        this.targetFunction.setSigma(sampleVariance);
+        alpha = sampleMean;
+        sigma = sampleVariance;
     }
 
 
@@ -110,20 +124,24 @@ public abstract class DisbalanceMinimizer {
         // What to do if overlap optimalV
         CompiledOrderBook userOB = new CompiledOrderBook();
 
-        double minAskPrice = userAsks.get(0).getPrice();
-        for (PriceAmountPair order: userAsks) {
-            minAskPrice = Math.min(minAskPrice, order.getPrice());
-        }
-        for (PriceAmountPair order: userAsks) {
-            order.setPrice(minAskPrice);
+        if (userAsks.size() > 0) {
+            double minAskPrice = userAsks.get(0).getPrice();
+            for (PriceAmountPair order : userAsks) {
+                minAskPrice = Math.min(minAskPrice, order.getPrice());
+            }
+            for (PriceAmountPair order : userAsks) {
+                order.setPrice(minAskPrice);
+            }
         }
 
-        double maxBidPrice = userBids.get(0).getPrice();
-        for (PriceAmountPair order: userBids) {
-            maxBidPrice = Math.max(maxBidPrice, order.getPrice());
-        }
-        for (PriceAmountPair order: userBids) {
-            order.setPrice(maxBidPrice);
+        if (userBids.size() > 0) {
+            double maxBidPrice = userBids.get(0).getPrice();
+            for (PriceAmountPair order : userBids) {
+                maxBidPrice = Math.max(maxBidPrice, order.getPrice());
+            }
+            for (PriceAmountPair order : userBids) {
+                order.setPrice(maxBidPrice);
+            }
         }
 
         userOB.setBids(userBids);

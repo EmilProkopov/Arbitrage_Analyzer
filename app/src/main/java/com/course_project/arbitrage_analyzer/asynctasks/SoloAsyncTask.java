@@ -14,8 +14,8 @@ import com.course_project.arbitrage_analyzer.model.SettingsContainer;
 import com.course_project.arbitrage_analyzer.model.disbalance_minimization.DisbalanceEstimator;
 import com.course_project.arbitrage_analyzer.model.disbalance_minimization.EstimatorResult;
 import com.course_project.arbitrage_analyzer.model.disbalance_minimization.MinimizerResult;
+import com.course_project.arbitrage_analyzer.model.disbalance_minimization.minimizers.BayesLaplaceMinimizer;
 import com.course_project.arbitrage_analyzer.model.disbalance_minimization.minimizers.DisbalanceMinimizer;
-import com.course_project.arbitrage_analyzer.model.disbalance_minimization.minimizers.SimpleMinimizer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,7 +79,8 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
     }
 
     private OutputDataSet analyzeMarkets() {
-        DisbalanceMinimizer minimizer = new SimpleMinimizer();
+        //DisbalanceMinimizer minimizer = new SimpleMinimizer();
+        DisbalanceMinimizer minimizer = new BayesLaplaceMinimizer((short)10, 1.0);
         DisbalanceEstimator estimator = new DisbalanceEstimator();
 
         //Get orderBook with top orders from all markets.
@@ -289,7 +290,7 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
         ob.sort();
         return ob;
     }
-
+/*
     private CompiledOrderBook genTestOB1() {
         CompiledOrderBook ob = new CompiledOrderBook();
         double[] askAmounts = new double[] {20, 10, 4, 2, 0.5};
