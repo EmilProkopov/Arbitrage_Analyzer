@@ -7,6 +7,7 @@ import com.course_project.arbitrage_analyzer.interfaces.ArbitragePresenter;
 import com.course_project.arbitrage_analyzer.model.CompiledOrderBook;
 import com.course_project.arbitrage_analyzer.model.Deal;
 import com.course_project.arbitrage_analyzer.model.DealType;
+import com.course_project.arbitrage_analyzer.model.MarketInfoGetter;
 import com.course_project.arbitrage_analyzer.model.OrderBookGetter;
 import com.course_project.arbitrage_analyzer.model.OutputDataSet;
 import com.course_project.arbitrage_analyzer.model.PriceAmountPair;
@@ -31,6 +32,7 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
     private String firstCurrency;
     private String secondCurrency; //Second currency in the pair.
     private OrderBookGetter orderBookGetter;
+    private MarketInfoGetter infoGetter;
 
 
     public SoloAsyncTask(OrderBookGetter.OrderBookGetterProgressListener orderBookListener,
@@ -40,6 +42,7 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
         this.presenter = presenter;
         settings = new SettingsContainer();
         orderBookGetter = new OrderBookGetter(orderBookListener);
+        infoGetter = new MarketInfoGetter();
     }
 
     public void updateSettings(SettingsContainer newSettings) {
@@ -79,18 +82,22 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
     }
 
     private OutputDataSet analyzeMarkets() {
+
+        double trps = infoGetter.getTradeRatePerSeoond(settings);
         //DisbalanceMinimizer minimizer = new SimpleMinimizer();
         DisbalanceMinimizer minimizer = new BayesLaplaceMinimizer((short)10, 1.0);
+        minimizer.setTradeRatePerSecond(trps);
+
         DisbalanceEstimator estimator = new DisbalanceEstimator();
 
         //Get orderBook with top orders from all markets.
-        CompiledOrderBook orderBook = orderBookGetter.getCompiledOrderBook(settings, true);
-        // CompiledOrderBook orderBook = genTestOB1();
+        // CompiledOrderBook orderBook = orderBookGetter.getCompiledOrderBook(settings, true);
+         CompiledOrderBook orderBook = genTestOB1();
         CompiledOrderBook orderBookCopy = orderBook.clone();
 
         MinimizerResult minResult = minimizer.getResult(orderBookCopy);
-        CompiledOrderBook actualOrderBook = orderBookGetter.getCompiledOrderBook(settings, false);
-        // CompiledOrderBook actualOrderBook = genTestOB1();
+        //CompiledOrderBook actualOrderBook = orderBookGetter.getCompiledOrderBook(settings, false);
+         CompiledOrderBook actualOrderBook = genTestOB1();
         EstimatorResult estimate = estimator.getEstimate(actualOrderBook, minResult.getResultOrderBook());
 
         return formOutputDataSet(orderBook, minResult.getOptimalV(), estimate.getUsedSecondCurrencyAmount());
@@ -267,7 +274,7 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
         super.onCancelled();
         this.presenter = null;
     }
-/*
+///*
     private CompiledOrderBook genTestOB1() {
         CompiledOrderBook ob = new CompiledOrderBook();
         double[] askAmounts = new double[] {10, 4, 2};
