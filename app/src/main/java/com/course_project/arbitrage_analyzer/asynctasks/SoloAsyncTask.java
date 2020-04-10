@@ -15,8 +15,8 @@ import com.course_project.arbitrage_analyzer.model.SettingsContainer;
 import com.course_project.arbitrage_analyzer.model.disbalance_minimization.DisbalanceEstimator;
 import com.course_project.arbitrage_analyzer.model.disbalance_minimization.EstimatorResult;
 import com.course_project.arbitrage_analyzer.model.disbalance_minimization.MinimizerResult;
+import com.course_project.arbitrage_analyzer.model.disbalance_minimization.minimizers.BayesLaplaceMinimizer;
 import com.course_project.arbitrage_analyzer.model.disbalance_minimization.minimizers.DisbalanceMinimizer;
-import com.course_project.arbitrage_analyzer.model.disbalance_minimization.minimizers.SimpleMinimizer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,8 +62,8 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
 
     private void initializeMinimizer() {
         double trps = infoGetter.getTradeRatePerSeoond(settings);
-        //minimizer = new BayesLaplaceMinimizer((short)10, 1.0);
-        minimizer = new SimpleMinimizer();
+        minimizer = new BayesLaplaceMinimizer((short)10, 1.0);
+        //minimizer = new SimpleMinimizer();
         minimizer.setTradeRatePerSecond(trps);
     }
 

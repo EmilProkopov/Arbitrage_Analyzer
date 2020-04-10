@@ -80,5 +80,25 @@ public class CompiledOrderBook implements Cloneable {
     }
 
 
+    public CompiledOrderBook getTopNOrders(int n) {
+
+        ArrayList<PriceAmountPair> newBids = new ArrayList<>(n);
+        ArrayList<PriceAmountPair> newAsks = new ArrayList<>(n);
+
+        for (int i = 0; i < Math.min(n, asks.size()); ++i) {
+            newAsks.add(asks.get(i));
+        }
+        for (int i = 0; i < Math.min(n, bids.size()); ++i) {
+            newBids.add(bids.get(i));
+        }
+
+        CompiledOrderBook newOB = new CompiledOrderBook();
+        newOB.setBids(newBids);
+        newOB.setAsks(newAsks);
+
+        return newOB;
+    }
+
+
 
 }

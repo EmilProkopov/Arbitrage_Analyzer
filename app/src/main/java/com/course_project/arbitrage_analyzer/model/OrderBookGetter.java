@@ -314,7 +314,7 @@ public class OrderBookGetter {
         return gdaxResponse;
     }
     //Convert Gdax response into CompiledOrderBook.
-    private CompiledOrderBook getGdaxTop50CleanOrderBook(String currencyPair) {
+    private CompiledOrderBook getGdaxTop50CleanOrderBook(int limit, String currencyPair) {
 
         GdaxResponse responce;
         responce = getGdaxResponseTop50(currencyPair);
@@ -354,7 +354,7 @@ public class OrderBookGetter {
         }
         res.setBids(curBids);
 
-        return res;
+        return res.getTopNOrders(limit);
     }
 
 
@@ -484,7 +484,7 @@ public class OrderBookGetter {
         if (gdax) {
             processedExchangeCount++;
             updateListener(showProgress, processedExchangeCount, exchangeCount);
-            result.addAll(getGdaxTop50CleanOrderBook(currencyPair));
+            result.addAll(getGdaxTop50CleanOrderBook(limit, currencyPair));
         }
         /*if (sp.getBoolean("kucoin", true)) {
             result.addAll(getKucoinCleanOrderBook(limit, currencyPair));

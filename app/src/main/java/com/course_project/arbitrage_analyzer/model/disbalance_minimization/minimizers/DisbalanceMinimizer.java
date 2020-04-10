@@ -47,7 +47,8 @@ public abstract class DisbalanceMinimizer {
 
     protected double q(double v_t) {
         double seconds = v_t / tradeRatePerSecond;
-        return gaussian(seconds);
+        double g = gaussian(seconds);
+        return g;
     }
 
 
