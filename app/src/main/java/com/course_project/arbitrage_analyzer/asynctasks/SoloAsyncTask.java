@@ -15,8 +15,8 @@ import com.course_project.arbitrage_analyzer.model.SettingsContainer;
 import com.course_project.arbitrage_analyzer.model.disbalance_minimization.DisbalanceEstimator;
 import com.course_project.arbitrage_analyzer.model.disbalance_minimization.EstimatorResult;
 import com.course_project.arbitrage_analyzer.model.disbalance_minimization.MinimizerResult;
-import com.course_project.arbitrage_analyzer.model.disbalance_minimization.minimizers.BayesLaplaceMinimizer;
 import com.course_project.arbitrage_analyzer.model.disbalance_minimization.minimizers.DisbalanceMinimizer;
+import com.course_project.arbitrage_analyzer.model.disbalance_minimization.minimizers.SimpleMinimizer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +33,10 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
     private String secondCurrency; //Second currency in the pair.
     private OrderBookGetter orderBookGetter;
     private MarketInfoGetter infoGetter;
+    private DisbalanceMinimizer minimizer;
+    private DisbalanceEstimator estimator;
 
+    private boolean firstLoop = true;
 
     public SoloAsyncTask(OrderBookGetter.OrderBookGetterProgressListener orderBookListener,
                          ArbitragePresenter presenter) {
@@ -43,61 +46,42 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
         settings = new SettingsContainer();
         orderBookGetter = new OrderBookGetter(orderBookListener);
         infoGetter = new MarketInfoGetter();
+        estimator = new DisbalanceEstimator();
     }
+
 
     public void updateSettings(SettingsContainer newSettings) {
         this.settings = newSettings;
         firstCurrency = settings.getCurrencyPare().split("/")[0];
         secondCurrency = settings.getCurrencyPare().split("/")[1];
-    }
-
-
-    private void fillAskBidChartPoints(List<Double> bidAmountPoints ,
-                                       List<Double> askAmountPoints ,
-                                       List<Double> bidPricePoints ,
-                                       List<Double> askPricePoints ,
-                                       CompiledOrderBook orderBook) {
-
-        List<PriceAmountPair> asks = orderBook.getAsks();
-        List<PriceAmountPair> bids = orderBook.getBids();
-
-        double y = 0.0;
-
-        for (int i = 0; i < asks.size(); ++i) {
-            if (asks.get(i).getAmount() > 0) {
-                y += asks.get(i).getAmount() * asks.get(i).getPrice();
-                askAmountPoints.add(y);
-                askPricePoints.add(asks.get(i).getPrice());
-            }
-        }
-
-        y = 0.0;
-        for (int i = 0; i < bids.size(); ++i) {
-            if (bids.get(i).getAmount() > 0) {
-                y += bids.get(i).getAmount() * bids.get(i).getPrice();
-                bidAmountPoints.add(y);
-                bidPricePoints.add(bids.get(i).getPrice());
-            }
+        if (!firstLoop) {
+            initializeMinimizer();
         }
     }
+
+
+    private void initializeMinimizer() {
+        double trps = infoGetter.getTradeRatePerSeoond(settings);
+        //minimizer = new BayesLaplaceMinimizer((short)10, 1.0);
+        minimizer = new SimpleMinimizer();
+        minimizer.setTradeRatePerSecond(trps);
+    }
+
 
     private OutputDataSet analyzeMarkets() {
 
-        double trps = infoGetter.getTradeRatePerSeoond(settings);
-        //DisbalanceMinimizer minimizer = new SimpleMinimizer();
-        DisbalanceMinimizer minimizer = new BayesLaplaceMinimizer((short)10, 1.0);
-        minimizer.setTradeRatePerSecond(trps);
-
-        DisbalanceEstimator estimator = new DisbalanceEstimator();
-
+        if (firstLoop) {
+            firstLoop = false;
+            initializeMinimizer();
+        }
         //Get orderBook with top orders from all markets.
-        // CompiledOrderBook orderBook = orderBookGetter.getCompiledOrderBook(settings, true);
-         CompiledOrderBook orderBook = genTestOB1();
+        CompiledOrderBook orderBook = orderBookGetter.getCompiledOrderBook(settings, true);
+        // CompiledOrderBook orderBook = genTestOB1();
         CompiledOrderBook orderBookCopy = orderBook.clone();
 
         MinimizerResult minResult = minimizer.getResult(orderBookCopy);
-        //CompiledOrderBook actualOrderBook = orderBookGetter.getCompiledOrderBook(settings, false);
-         CompiledOrderBook actualOrderBook = genTestOB1();
+        CompiledOrderBook actualOrderBook = orderBookGetter.getCompiledOrderBook(settings, false);
+        // CompiledOrderBook actualOrderBook = genTestOB1();
         EstimatorResult estimate = estimator.getEstimate(actualOrderBook, minResult.getResultOrderBook());
 
         return formOutputDataSet(orderBook, minResult.getOptimalV(), estimate.getUsedSecondCurrencyAmount());
@@ -232,6 +216,36 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
     }
 
 
+    private void fillAskBidChartPoints(List<Double> bidAmountPoints ,
+                                       List<Double> askAmountPoints ,
+                                       List<Double> bidPricePoints ,
+                                       List<Double> askPricePoints ,
+                                       CompiledOrderBook orderBook) {
+
+        List<PriceAmountPair> asks = orderBook.getAsks();
+        List<PriceAmountPair> bids = orderBook.getBids();
+
+        double y = 0.0;
+
+        for (int i = 0; i < asks.size(); ++i) {
+            if (asks.get(i).getAmount() > 0) {
+                y += asks.get(i).getAmount() * asks.get(i).getPrice();
+                askAmountPoints.add(y);
+                askPricePoints.add(asks.get(i).getPrice());
+            }
+        }
+
+        y = 0.0;
+        for (int i = 0; i < bids.size(); ++i) {
+            if (bids.get(i).getAmount() > 0) {
+                y += bids.get(i).getAmount() * bids.get(i).getPrice();
+                bidAmountPoints.add(y);
+                bidPricePoints.add(bids.get(i).getPrice());
+            }
+        }
+    }
+
+
     @Override
     protected OutputDataSet doInBackground(Void... params) {
 
@@ -274,7 +288,7 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
         super.onCancelled();
         this.presenter = null;
     }
-///*
+/*
     private CompiledOrderBook genTestOB1() {
         CompiledOrderBook ob = new CompiledOrderBook();
         double[] askAmounts = new double[] {10, 4, 2};

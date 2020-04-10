@@ -8,7 +8,6 @@ import com.course_project.arbitrage_analyzer.network.exmo.ExmoSingleTicker;
 import com.course_project.arbitrage_analyzer.network.exmo.ExmoTickers;
 import com.course_project.arbitrage_analyzer.network.gdax.GdaxTicker;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 import retrofit2.Call;
@@ -119,8 +118,8 @@ public class MarketInfoGetter {
         try {
             res = responseCall.execute();
             response = res.body();
-        } catch (IOException e) {
-            Log.d(LOGTAG, "IO");
+        } catch (Exception e) {
+            Log.e(LOGTAG, "EXMO problem");
         }
 
         if (response != null) {
@@ -164,8 +163,8 @@ public class MarketInfoGetter {
         try {
             res = responseCall.execute();
             response = res.body();
-        } catch (IOException e) {
-            Log.d(LOGTAG, "IO");
+        } catch (Exception e) {
+            Log.e(LOGTAG, "GDAX problem");
         }
 
         if (response != null) {

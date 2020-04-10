@@ -27,6 +27,8 @@ public abstract class DisbalanceMinimizer {
         this.maxRoundsCount = maxRoundsCount;
         this.timeHistory = new LinkedList<>();
         this.timeHistoryMaxLength = timeHistoryMaxLength;
+        this.alpha = 10;
+        this.sigma = 1;
     }
 
 
@@ -34,6 +36,10 @@ public abstract class DisbalanceMinimizer {
 
 
     private double gaussian(double x) {
+
+        if (sigma == 0) {
+            return alpha;
+        }
         return Math.exp(-(x - alpha)*(x - alpha) / (2 * sigma*sigma))
                 / (sigma * Math.sqrt(2*Math.PI));
     }
