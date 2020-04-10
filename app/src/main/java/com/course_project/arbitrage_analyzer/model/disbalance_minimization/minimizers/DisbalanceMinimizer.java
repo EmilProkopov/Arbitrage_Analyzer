@@ -163,7 +163,6 @@ public abstract class DisbalanceMinimizer {
         CompiledOrderBook obCopy1 = ob.clone();
         CompiledOrderBook obCopy2 = ob.clone();
         double maxV_t = Util.calculateOBOverlapV(obCopy1.getAsks(), obCopy1.getBids());
-        double maxAmount = Util.calculateOBOverlapAmount(obCopy1.getAsks(), obCopy1.getBids(), true);
 
         long startTime = System.nanoTime();
         double optimalV = findOptimalV(obCopy2, maxV_t);
@@ -172,7 +171,10 @@ public abstract class DisbalanceMinimizer {
         timeHistory.addLast(time);
         updateTargetFunctionParams();
 
-        return new MinimizerResult(optimalV, maxAmount, time, userOB);
+        double optimalAmount = Util.calculateOBOverlapAmount(obCopy1.getAsks(), obCopy1.getBids()
+                , true, optimalV);
+
+        return new MinimizerResult(optimalV, optimalAmount, time, userOB);
     }
 
     public void cleanTimeHistory() {

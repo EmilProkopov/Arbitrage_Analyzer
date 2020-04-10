@@ -1,6 +1,9 @@
 package com.course_project.arbitrage_analyzer.model;
 
 
+import com.course_project.arbitrage_analyzer.model.disbalance_minimization.EstimatorResult;
+import com.course_project.arbitrage_analyzer.model.disbalance_minimization.MinimizerResult;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,11 +14,10 @@ public class OutputDataSet {
     private List<Double> profitPoints;
     private List<Deal> deals;
     private Double profit;
-    private Double optimalSecondCurrencyAmount;
-    private Double optimalFirstCurrencyAmount;
+    private MinimizerResult minimizerResult;
     private Double optimalProfit;
 
-    private Double realSecondCurrencyAmount;
+    private EstimatorResult estimate;
     private Double realFirstCurrencyAmount;
     private Double realProfit;
 
@@ -36,11 +38,11 @@ public class OutputDataSet {
         profitPoints = new ArrayList<>();
         deals = new ArrayList<>();
         profit = 0.0;
-        optimalFirstCurrencyAmount = 0.0;
-        optimalSecondCurrencyAmount = 0.0;
+        minimizerResult = new MinimizerResult(0.0, 0.0, 0L
+                , new CompiledOrderBook());
         optimalProfit = 0.0;
         realFirstCurrencyAmount = 0.0;
-        realSecondCurrencyAmount = 0.0;
+        estimate = new EstimatorResult(0.0, 0.0);
         realProfit = 0.0;
         firstCurrencyAmount = 0.0;
         secondCurrencyAmount = 0.0;
@@ -182,14 +184,6 @@ public class OutputDataSet {
         this.profit = profit;
     }
 
-    public Double getOptimalSecondCurrencyAmount() {
-        return optimalSecondCurrencyAmount;
-    }
-
-    public void setOptimalSecondCurrencyAmount(Double optimalSecondCurrencyAmount) {
-        this.optimalSecondCurrencyAmount = optimalSecondCurrencyAmount;
-    }
-
     public Double getOptimalProfit() {
         return optimalProfit;
     }
@@ -262,22 +256,6 @@ public class OutputDataSet {
         this.askPricePoints = askPricePoints;
     }
 
-    public Double getOptimalFirstCurrencyAmount() {
-        return optimalFirstCurrencyAmount;
-    }
-
-    public void setOptimalFirstCurrencyAmount(Double optimalFirstCurrencyAmount) {
-        this.optimalFirstCurrencyAmount = optimalFirstCurrencyAmount;
-    }
-
-    public Double getRealSecondCurrencyAmount() {
-        return realSecondCurrencyAmount;
-    }
-
-    public void setRealSecondCurrencyAmount(Double realSecondCurrencyAmount) {
-        this.realSecondCurrencyAmount = realSecondCurrencyAmount;
-    }
-
     public Double getRealFirstCurrencyAmount() {
         return realFirstCurrencyAmount;
     }
@@ -292,5 +270,21 @@ public class OutputDataSet {
 
     public void setRealProfit(Double realProfit) {
         this.realProfit = realProfit;
+    }
+
+    public MinimizerResult getMinimizerResult() {
+        return minimizerResult;
+    }
+
+    public void setMinimizerResult(MinimizerResult minimizerResult) {
+        this.minimizerResult = minimizerResult;
+    }
+
+    public EstimatorResult getEstimate() {
+        return estimate;
+    }
+
+    public void setEstimate(EstimatorResult estimate) {
+        this.estimate = estimate;
     }
 }

@@ -63,16 +63,25 @@ public class Util {
         return calculateOBOverlapAmount(asksO, bidsO, false);
     }
 
+    public static double calculateOBOverlapAmount(List<PriceAmountPair> asksO
+            , List<PriceAmountPair> bidsO
+            , boolean strictInequality) {
+
+        return calculateOBOverlapAmount(asksO, bidsO, strictInequality, null);
+    }
+
 
     public static double calculateOBOverlapAmount(List<PriceAmountPair> asksO
                                                 , List<PriceAmountPair> bidsO
-                                                , boolean strictInequality) {
+                                                , boolean strictInequality
+                                                , Double VLimit) {
 
         List<PriceAmountPair> asks = clonePAPList(asksO);
         List<PriceAmountPair> bids = clonePAPList(bidsO);
 
         double deltaAmount;
         double curAmount = 0;
+        double curV = 0.0;
 
         int askInd = 0;
         int bidInd = 0;
@@ -105,10 +114,17 @@ public class Util {
                 deltaAmount = askAmount;
             }
 
+            if ((VLimit != null) && (curV + deltaAmount > VLimit)) {
+                deltaAmount = VLimit - curV;
+                curAmount += deltaAmount;
+                break;
+            }
+
             asks.get(askInd).setAmount(askAmount - deltaAmount);
             bids.get(bidInd).setAmount(bidAmount - deltaAmount);
 
             curAmount += deltaAmount;
+            curV += asks.get(askInd).getPrice() * deltaAmount;
         }
 
         return curAmount;

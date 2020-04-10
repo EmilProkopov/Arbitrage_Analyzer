@@ -20,9 +20,9 @@ public class BayesLaplaceMinimizer extends TableMinimizer {
         List<List<Double>> table = formTable(possiblePoints);
 
         List<Double> estimates = new ArrayList<>(possiblePoints.size());
-        for(int i = 0; i < table.size(); ++i) {
+        for(int j = 0; j < table.size(); ++j) {
             double tmp = 0;
-            for (int j = 0; j < table.size(); ++j) {
+            for (int i = 0; i < table.size(); ++i) {
                 double item = table.get(i).get(j);
                 tmp += q(possiblePoints.get(j)) * item;
             }

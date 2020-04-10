@@ -161,9 +161,9 @@ public class MainActivity extends AppCompatActivity implements ArbitrageView {
         ds.setCircleColors(getResources().getColor(R.color.diagramCircleOrdinary));
 
         //Make a DataSet with optimal point.
-        float optimalAmount = lastOutputDataSet.getOptimalSecondCurrencyAmount().floatValue();
+        float optimalAmount = (float) lastOutputDataSet.getMinimizerResult().getOptimalV();
         float optimalProfit = lastOutputDataSet.getOptimalProfit().floatValue();
-        float realAmount = lastOutputDataSet.getRealSecondCurrencyAmount().floatValue();
+        float realAmount = (float) lastOutputDataSet.getEstimate().getUsedSecondCurrencyAmount();
         float realProfit = lastOutputDataSet.getRealProfit().floatValue();
 
         List<Entry> optimalChartEntries = new ArrayList<>();
@@ -208,6 +208,7 @@ public class MainActivity extends AppCompatActivity implements ArbitrageView {
             bidChartEntries.add(new Entry(lastOutputDataSet.getBidPricePoints().get(i).floatValue()
                     , lastOutputDataSet.getBidAmountPoints().get(i).floatValue()));
         }
+        /*
         //////////////////////////////////////////////////////////
         ArrayList<Float> xesAsk = new ArrayList<>();
         ArrayList<Float> yesAsk = new ArrayList<>();
@@ -226,8 +227,8 @@ public class MainActivity extends AppCompatActivity implements ArbitrageView {
         Log.e("YAsk", yesAsk.toString());
         Log.e("XBid", xesBid.toString());
         Log.e("YBid", yesBid.toString());
-         */
         //////////////////////////////////////////////////
+        */
         Collections.sort(bidChartEntries, new EntryXComparator());
         Collections.sort(askChartEntries, new EntryXComparator());
 
@@ -259,8 +260,8 @@ public class MainActivity extends AppCompatActivity implements ArbitrageView {
         lastOutputDataSet = dataSet;
         updateChart();
 
-        float optimalFCAmount = lastOutputDataSet.getOptimalFirstCurrencyAmount().floatValue();
-        float optimalSCAmount = lastOutputDataSet.getOptimalSecondCurrencyAmount().floatValue();
+        float optimalFCAmount = (float) lastOutputDataSet.getMinimizerResult().getOptimalAmount();
+        float optimalSCAmount = (float) lastOutputDataSet.getMinimizerResult().getOptimalV();
         float optimalProfit = lastOutputDataSet.getOptimalProfit().floatValue();
 
         //Display optimal profit.

@@ -84,10 +84,14 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
         // CompiledOrderBook actualOrderBook = genTestOB1();
         EstimatorResult estimate = estimator.getEstimate(actualOrderBook, minResult.getResultOrderBook());
 
-        return formOutputDataSet(orderBook, minResult.getOptimalV(), estimate.getUsedSecondCurrencyAmount());
+        return formOutputDataSet(orderBook, minResult, estimate);
     }
 
-    private OutputDataSet formOutputDataSet(CompiledOrderBook orderBook, double optimalV, double realV) {
+    private OutputDataSet formOutputDataSet(CompiledOrderBook orderBook, MinimizerResult minResult
+            , EstimatorResult estimate) {
+
+        double optimalV = minResult.getOptimalV();
+        double realV = estimate.getUsedSecondCurrencyAmount();
 
         double profit = 0.0; //Profit that we can get.
         Double firstCurrencyAmount = 0.0;
@@ -97,7 +101,6 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
         ArrayList<Double> amountPoints = new ArrayList<>();
         //List of deals to make.
         ArrayList<Deal> deals = new ArrayList<>(); //List of deals that should be made.
-        double optimalFirstCurrencyAmount = 0.0;
         double optimalProfit = 0.0;
 
         double realFirstCurrencyAmount = 0.0;
@@ -134,7 +137,6 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
                 optimalPointPassed = true;
                 double deltaSecond = optimalV - secondCurrencyAmount;
                 double deltaFirst = deltaSecond / orderBook.getAsks().get(ax).getPrice();
-                optimalFirstCurrencyAmount = firstCurrencyAmount + deltaFirst;
                 optimalProfit = profit + (orderBook.getBids().get(bx).getPrice()
                         - orderBook.getAsks().get(ax).getPrice()) * deltaFirst;
 
@@ -187,12 +189,11 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
 
         //Put data into the resulting data set.
         outputDataSet.setProfit(profit);
-        outputDataSet.setOptimalSecondCurrencyAmount(optimalV);
-        outputDataSet.setOptimalFirstCurrencyAmount(optimalFirstCurrencyAmount);
+        outputDataSet.setMinimizerResult(minResult);
         outputDataSet.setOptimalProfit(optimalProfit);
 
         outputDataSet.setRealFirstCurrencyAmount(realFirstCurrencyAmount);
-        outputDataSet.setRealSecondCurrencyAmount(realV);
+        outputDataSet.setEstimate(estimate);
         outputDataSet.setRealProfit(realProfit);
 
         outputDataSet.setAmountPoints(amountPoints);
