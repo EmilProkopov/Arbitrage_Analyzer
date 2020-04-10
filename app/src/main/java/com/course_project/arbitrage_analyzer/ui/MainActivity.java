@@ -26,6 +26,7 @@ import com.course_project.arbitrage_analyzer.model.DealListData;
 import com.course_project.arbitrage_analyzer.model.OutputDataSet;
 import com.course_project.arbitrage_analyzer.model.SettingsContainer;
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
@@ -168,30 +169,47 @@ public class MainActivity extends AppCompatActivity implements ArbitrageView {
         float realAmount = (float) lastOutputDataSet.getEstimate().getUsedSecondCurrencyAmount();
         float realProfit = lastOutputDataSet.getRealProfit().floatValue();
 
+        LimitLine optimalLL = new LimitLine(optimalAmount, "");
+        optimalLL.setLineWidth(1f);
+        optimalLL.setLineColor(getApplicationContext().getResources().getColor(R.color.diagramCircleOptimal));
+        optimalLL.disableDashedLine();
+        /*
         List<Entry> optimalChartEntries = new ArrayList<>();
         optimalChartEntries.add(new Entry(optimalAmount, optimalProfit));
         LineDataSet ds2 = new LineDataSet(optimalChartEntries, "");
 
         ds2.setColor(R.color.colorPrimaryDark);
         ds2.setCircleColors(getResources().getColor(R.color.diagramCircleOptimal));
+        */
 
+        //Make a DataSet with real point
+        LimitLine realLL = new LimitLine(realAmount, "");
+        realLL.setLineWidth(1f);
+        realLL.setLineColor(getApplicationContext().getResources().getColor(R.color.diagramCircleReal));
+        realLL.disableDashedLine();
+        /*
         List<Entry> realChartEntries = new ArrayList<>();
         realChartEntries.add(new Entry(realAmount, realProfit));
         LineDataSet ds3 = new LineDataSet(realChartEntries, "");
 
         ds3.setColor(R.color.colorPrimaryDark);
         ds3.setCircleColors(getResources().getColor(R.color.diagramCircleReal));
+         */
 
-        LineDataSet[] lineDataSets = new LineDataSet[3];
+        LineDataSet[] lineDataSets = new LineDataSet[1];
         lineDataSets[0] = ds;
-        lineDataSets[1] = ds2;
-        lineDataSets[2] = ds3;
+        // lineDataSets[1] = ds2;
+        // lineDataSets[2] = ds3;
         LineData ld = new LineData(lineDataSets);
 
         chart.setData(ld);
         chart.getDescription().setText("Horizontal: amount; Vertical: profit");
         chart.getLegend().setEnabled(false);
         chart.getAxisLeft().setDrawLabels(false);
+
+        chart.getXAxis().removeAllLimitLines();
+        chart.getXAxis().addLimitLine(optimalLL);
+        chart.getXAxis().addLimitLine(realLL);
         chart.invalidate();
     }
 
