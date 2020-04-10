@@ -149,6 +149,8 @@ public class MainActivity extends AppCompatActivity implements ArbitrageView {
         LineChart chart = findViewById(R.id.diagram);
         //Points of the plot.
         List<Entry> chartEntries = new ArrayList<>();
+        //Zero point
+        chartEntries.add(new Entry(0f, 0f));
         //Fill the dealList of points.
         for (int i = 0; i < lastOutputDataSet.getAmountPoints().size(); ++i) {
 
