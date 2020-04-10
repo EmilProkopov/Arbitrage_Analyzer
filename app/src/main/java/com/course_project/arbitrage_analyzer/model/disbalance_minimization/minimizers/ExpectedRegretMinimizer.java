@@ -30,7 +30,7 @@ public class ExpectedRegretMinimizer extends TableMinimizer {
     }
 
 
-    private List<List<Double>> formDerivateTable(List<Double> possiblePoints, List<List<Double>> table) {
+    private List<List<Double>> formDerivativeTable(List<Double> possiblePoints, List<List<Double>> table) {
 
         List<List<Double>> derivTable = new ArrayList<>();
 
@@ -52,7 +52,8 @@ public class ExpectedRegretMinimizer extends TableMinimizer {
     double findOptimalV(CompiledOrderBook ob, double maxV_t) {
 
         List<Double> possiblePoints = calcPossibleVPoints(ob);
-        List<List<Double>> table = formTable(possiblePoints);
+        List<List<Double>> baseTable = formTable(possiblePoints);
+        List<List<Double>> table = formDerivativeTable(possiblePoints, baseTable);
 
         List<Double> estimates = new ArrayList<>(possiblePoints.size());
         for(int j = 0; j < table.size(); ++j) {
