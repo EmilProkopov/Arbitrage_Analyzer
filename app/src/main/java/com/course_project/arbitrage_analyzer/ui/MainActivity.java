@@ -25,6 +25,7 @@ import com.course_project.arbitrage_analyzer.interfaces.ArbitrageView;
 import com.course_project.arbitrage_analyzer.model.DealListData;
 import com.course_project.arbitrage_analyzer.model.OutputDataSet;
 import com.course_project.arbitrage_analyzer.model.SettingsContainer;
+import com.course_project.arbitrage_analyzer.model.disbalance_minimization.minimizers.MinimizerType;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.data.Entry;
@@ -116,6 +117,42 @@ public class MainActivity extends AppCompatActivity implements ArbitrageView {
         settings.setExmo(sp.getBoolean("exmo", true));
         settings.setGdax(sp.getBoolean("gdax", true));
 
+        settings.setHistorySize((short)Double.parseDouble(sp.getString("history_size", "10")));
+        settings.setNumberOfLaunches((int)Double.parseDouble(sp.getString("launch_number", "1")));
+
+        double riskConst = Double.parseDouble(sp.getString("risk_const", "0.5"));
+        if (riskConst > 1) {
+            riskConst = 1;
+        }
+        if (riskConst < 0) {
+            riskConst = 0;
+        }
+        settings.setRiskConst(riskConst);
+
+        MinimizerType minType;
+        String minimizerTypeString = sp.getString("minimizer_type", "Simple");
+        switch (minimizerTypeString) {
+            case ("Bayes-Laplace"):
+                minType = MinimizerType.BayesLaplace;
+                break;
+
+            case ("Expected regret"):
+                minType = MinimizerType.ExpectedRegret;
+                break;
+
+            case ("Cyclic coordinate descent"):
+                minType = MinimizerType.CyclicCoordinateDescent;
+                break;
+
+            case ("Pattern search"):
+                minType = MinimizerType.PatternSearch;
+                break;
+
+                default:
+                    minType = MinimizerType.Simple;
+        }
+        settings.setMinimizerType(minType);
+
         this.presenter.onSettingsChanged(settings);
     }
 
@@ -173,33 +210,33 @@ public class MainActivity extends AppCompatActivity implements ArbitrageView {
         optimalLL.setLineWidth(1f);
         optimalLL.setLineColor(getApplicationContext().getResources().getColor(R.color.diagramCircleOptimal));
         optimalLL.disableDashedLine();
-        /*
+
         List<Entry> optimalChartEntries = new ArrayList<>();
         optimalChartEntries.add(new Entry(optimalAmount, optimalProfit));
         LineDataSet ds2 = new LineDataSet(optimalChartEntries, "");
 
         ds2.setColor(R.color.colorPrimaryDark);
         ds2.setCircleColors(getResources().getColor(R.color.diagramCircleOptimal));
-        */
+
 
         //Make a DataSet with real point
         LimitLine realLL = new LimitLine(realAmount, "");
         realLL.setLineWidth(1f);
         realLL.setLineColor(getApplicationContext().getResources().getColor(R.color.diagramCircleReal));
         realLL.disableDashedLine();
-        /*
+
         List<Entry> realChartEntries = new ArrayList<>();
         realChartEntries.add(new Entry(realAmount, realProfit));
         LineDataSet ds3 = new LineDataSet(realChartEntries, "");
 
         ds3.setColor(R.color.colorPrimaryDark);
         ds3.setCircleColors(getResources().getColor(R.color.diagramCircleReal));
-         */
 
-        LineDataSet[] lineDataSets = new LineDataSet[1];
+
+        LineDataSet[] lineDataSets = new LineDataSet[3];
         lineDataSets[0] = ds;
-        // lineDataSets[1] = ds2;
-        // lineDataSets[2] = ds3;
+        lineDataSets[1] = ds2;
+        lineDataSets[2] = ds3;
         LineData ld = new LineData(lineDataSets);
 
         chart.setData(ld);

@@ -17,6 +17,9 @@ import com.course_project.arbitrage_analyzer.model.disbalance_minimization.Estim
 import com.course_project.arbitrage_analyzer.model.disbalance_minimization.MinimizerResult;
 import com.course_project.arbitrage_analyzer.model.disbalance_minimization.minimizers.BayesLaplaceMinimizer;
 import com.course_project.arbitrage_analyzer.model.disbalance_minimization.minimizers.DisbalanceMinimizer;
+import com.course_project.arbitrage_analyzer.model.disbalance_minimization.minimizers.ExpectedRegretMinimizer;
+import com.course_project.arbitrage_analyzer.model.disbalance_minimization.minimizers.MinimizerType;
+import com.course_project.arbitrage_analyzer.model.disbalance_minimization.minimizers.SimpleMinimizer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +50,7 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
         orderBookGetter = new OrderBookGetter(orderBookListener);
         infoGetter = new MarketInfoGetter();
         estimator = new DisbalanceEstimator();
+        initializeMinimizer();
     }
 
 
@@ -54,17 +58,25 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
         this.settings = newSettings;
         firstCurrency = settings.getCurrencyPare().split("/")[0];
         secondCurrency = settings.getCurrencyPare().split("/")[1];
-        if (!firstLoop) {
-            initializeMinimizer();
-        }
+        initializeMinimizer();
     }
 
 
     private void initializeMinimizer() {
-        double trps = infoGetter.getTradeRatePerSeoond(settings);
-        minimizer = new BayesLaplaceMinimizer((short)10, 1.0);
-        //minimizer = new SimpleMinimizer();
-        minimizer.setTradeRatePerSecond(trps);
+
+        firstLoop = true;
+
+        MinimizerType mt = settings.getMinimizerType();
+
+        if (mt.equals(MinimizerType.BayesLaplace)) {
+            minimizer = new BayesLaplaceMinimizer(settings.getHistorySize()
+                                                , settings.getRiskConst());
+        } else if (mt.equals(MinimizerType.ExpectedRegret)) {
+            minimizer = new ExpectedRegretMinimizer(settings.getHistorySize()
+                                                , settings.getRiskConst());
+        } else {
+            minimizer = new SimpleMinimizer();
+        }
     }
 
 
@@ -72,7 +84,8 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
 
         if (firstLoop) {
             firstLoop = false;
-            initializeMinimizer();
+            double trps = infoGetter.getTradeRatePerSeoond(settings);
+            minimizer.setTradeRatePerSecond(trps);
         }
         //Get orderBook with top orders from all markets.
         CompiledOrderBook orderBook = orderBookGetter.getCompiledOrderBook(settings, true);

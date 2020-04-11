@@ -1,5 +1,7 @@
 package com.course_project.arbitrage_analyzer.model;
 
+import com.course_project.arbitrage_analyzer.model.disbalance_minimization.minimizers.MinimizerType;
+
 public class SettingsContainer {
 
     private int updateRateSeconds;
@@ -10,6 +12,11 @@ public class SettingsContainer {
     private boolean exmo;
     private boolean gdax;
 
+    private short historySize;
+    private double riskConst;
+    private int numberOfLaunches;
+    private MinimizerType minimizerType;
+
     public SettingsContainer() {
         updateRateSeconds = 10;
         currencyPare = "BTC/USD";
@@ -18,6 +25,10 @@ public class SettingsContainer {
         cex = true;
         exmo = true;
         gdax = true;
+        historySize = 10;
+        riskConst = 0.5;
+        numberOfLaunches = 1;
+        minimizerType = MinimizerType.Simple;
     }
 
     public boolean getBitfinex() {
@@ -74,5 +85,37 @@ public class SettingsContainer {
 
     public void setDepthLimit(int depthLimit) {
         this.depthLimit = depthLimit;
+    }
+
+    public short getHistorySize() {
+        return historySize;
+    }
+
+    public void setHistorySize(short historySize) {
+        this.historySize = historySize;
+    }
+
+    public double getRiskConst() {
+        return riskConst;
+    }
+
+    public void setRiskConst(double riskConst) {
+        this.riskConst = riskConst;
+    }
+
+    public int getNumberOfLaunches() {
+        return numberOfLaunches;
+    }
+
+    public void setNumberOfLaunches(int numberOfLaunches) {
+        this.numberOfLaunches = numberOfLaunches;
+    }
+
+    public MinimizerType getMinimizerType() {
+        return minimizerType;
+    }
+
+    public void setMinimizerType(MinimizerType minimizerType) {
+        this.minimizerType = minimizerType;
     }
 }

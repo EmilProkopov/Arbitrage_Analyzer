@@ -55,4 +55,41 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="Minimizer settings">
+
+        <EditTextPreference
+            android:defaultValue="10"
+            android:dialogTitle="Input the execution time history size"
+            android:key="history_size"
+            android:summary="Size of execution time history"
+            android:dialogLayout="@layout/preference_edit_text"
+            android:title="History size"/>
+
+        <EditTextPreference
+            android:defaultValue="0.5"
+            android:dialogTitle="Input the rick constant value (from 0 to 1)"
+            android:key="risk_const"
+            android:summary="Value of risk constant"
+            android:dialogLayout="@layout/preference_edit_text"
+            android:title="Risk constant"/>
+
+        <EditTextPreference
+            android:defaultValue="1"
+            android:dialogTitle="Input the number of launches"
+            android:key="launch_number"
+            android:summary="Number of launches (for some minimizers)"
+            android:dialogLayout="@layout/preference_edit_text"
+            android:title="Number of launches"/>
+
+        <ListPreference
+            android:defaultValue="Simple"
+            android:dialogTitle="Choose the minimizer type"
+            android:entries="@array/minimizers"
+            android:entryValues="@array/minimizers"
+            android:key="minimizer_type"
+            android:summary="Type of minimizer that is used to find optimal amount"
+            android:title="Minimizer type" />
+
+    </PreferenceCategory>
+
 </android.support.v7.preference.PreferenceScreen>
