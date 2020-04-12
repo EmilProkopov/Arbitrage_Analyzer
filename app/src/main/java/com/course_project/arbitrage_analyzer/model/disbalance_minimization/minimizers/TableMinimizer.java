@@ -9,7 +9,7 @@ import java.util.List;
 public abstract class TableMinimizer extends DisbalanceMinimizer {
 
     public TableMinimizer(short timeHistoryMaxLength, double riskConst) {
-        super(new TableTargetFunction(riskConst), (short)-1, timeHistoryMaxLength);
+        super(new TableTargetFunction(riskConst), (short)-1, timeHistoryMaxLength, -1);
     }
 
 

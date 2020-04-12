@@ -5,7 +5,7 @@ import com.course_project.arbitrage_analyzer.model.CompiledOrderBook;
 public class SimpleMinimizer extends DisbalanceMinimizer {
 
     public SimpleMinimizer() {
-        super(null, (short)-1, (short)1);
+        super(null, (short)-1, (short)1, -1);
     }
 
     @Override

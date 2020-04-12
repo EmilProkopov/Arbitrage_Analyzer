@@ -15,6 +15,7 @@ public class SettingsContainer {
     private short historySize;
     private double riskConst;
     private int numberOfLaunches;
+    private int maxIterations;
     private MinimizerType minimizerType;
 
     public SettingsContainer() {
@@ -28,6 +29,7 @@ public class SettingsContainer {
         historySize = 10;
         riskConst = 0.5;
         numberOfLaunches = 1;
+        maxIterations = 1000;
         minimizerType = MinimizerType.Simple;
     }
 
@@ -117,5 +119,13 @@ public class SettingsContainer {
 
     public void setMinimizerType(MinimizerType minimizerType) {
         this.minimizerType = minimizerType;
+    }
+
+    public int getMaxIterations() {
+        return maxIterations;
+    }
+
+    public void setMaxIterations(int maxIterations) {
+        this.maxIterations = maxIterations;
     }
 }

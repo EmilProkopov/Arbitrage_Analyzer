@@ -81,6 +81,15 @@
             android:dialogLayout="@layout/preference_edit_text"
             android:title="Number of launches"/>
 
+        <EditTextPreference
+            android:defaultValue="1000"
+            android:dialogTitle="Input the max number of iterations"
+            android:key="max_iterations"
+            android:summary="Max number of iterations (for some minimizers)"
+            android:dialogLayout="@layout/preference_edit_text"
+            android:title="Max iterations"/>
+
+
         <ListPreference
             android:defaultValue="Simple"
             android:dialogTitle="Choose the minimizer type"

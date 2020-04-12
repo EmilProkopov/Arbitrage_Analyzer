@@ -16,17 +16,21 @@ public abstract class DisbalanceMinimizer {
     protected TargetFunction targetFunction;
     private double tradeRatePerSecond = 1;
     private short maxRoundsCount;
+    private int maxIterationsCount;
     private short timeHistoryMaxLength;
     private double alpha;
     private double sigma;
 
     private LinkedList<Long> timeHistory;
 
-    DisbalanceMinimizer(TargetFunction targetFunction, short maxRoundsCount, short timeHistoryMaxLength) {
+    DisbalanceMinimizer(TargetFunction targetFunction, short maxRoundsCount
+                        , short timeHistoryMaxLength, int maxIterationsCount) {
+
         this.targetFunction = targetFunction;
         this.maxRoundsCount = maxRoundsCount;
         this.timeHistory = new LinkedList<>();
         this.timeHistoryMaxLength = timeHistoryMaxLength;
+        this.maxIterationsCount = maxIterationsCount;
         this.alpha = 10;
         this.sigma = 1;
     }

@@ -119,6 +119,7 @@ public class MainActivity extends AppCompatActivity implements ArbitrageView {
 
         settings.setHistorySize((short)Double.parseDouble(sp.getString("history_size", "10")));
         settings.setNumberOfLaunches((int)Double.parseDouble(sp.getString("launch_number", "1")));
+        settings.setMaxIterations((int) Double.parseDouble(sp.getString("max_iterations", "1000")));
 
         double riskConst = Double.parseDouble(sp.getString("risk_const", "0.5"));
         if (riskConst > 1) {
