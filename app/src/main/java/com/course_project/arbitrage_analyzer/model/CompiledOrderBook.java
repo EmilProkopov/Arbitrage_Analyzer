@@ -12,6 +12,11 @@ public class CompiledOrderBook implements Cloneable {
     private List<PriceAmountPair> bids;
     private List<PriceAmountPair> asks;
 
+    private double bitfinexFee = 0.1e-2;
+    private double cexFee = 0.16e-2;
+    private double exmoFee = 0.2e-2;
+    private double gdaxFee = 0.5e-2;
+
     public CompiledOrderBook() {
         bids = new ArrayList<>();
         asks = new ArrayList<>();
@@ -80,6 +85,39 @@ public class CompiledOrderBook implements Cloneable {
     }
 
 
+    private double getCommissionSize(String marketName) {
+
+        switch (marketName) {
+            case ("Bitfenix"):
+                return bitfinexFee;
+            case ("Cex") :
+                return cexFee;
+            case ("Exmo"):
+                return exmoFee;
+            case ("Gdax"):
+                return gdaxFee;
+
+                default:
+                    return 0.0;
+        }
+    }
+
+
+    public void applyCommissions() {
+
+        double comission;
+
+        for (PriceAmountPair pap : asks) {
+            comission = getCommissionSize(pap.getMarketName());
+            pap.setPrice(pap.getPrice() + pap.getPrice()*comission);
+        }
+        for (PriceAmountPair pap : bids) {
+            comission = getCommissionSize(pap.getMarketName());
+            pap.setPrice(pap.getPrice() - pap.getPrice()*comission);
+        }
+    }
+
+
     public CompiledOrderBook getTopNOrders(int n) {
 
         ArrayList<PriceAmountPair> newBids = new ArrayList<>(n);
@@ -98,7 +136,5 @@ public class CompiledOrderBook implements Cloneable {
 
         return newOB;
     }
-
-
 
 }

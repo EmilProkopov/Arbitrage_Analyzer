@@ -492,6 +492,7 @@ public class OrderBookGetter {
         //Sort the order book.
         //Bids sorted in descending order by price.
         //Asks sorted in ascending order by price.
+        //result.applyCommissions();
         result.sort();
 
         if (showProgress) {
