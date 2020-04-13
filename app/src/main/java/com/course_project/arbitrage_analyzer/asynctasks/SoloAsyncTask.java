@@ -120,6 +120,7 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
         double realProfit = 0.0;
 
         boolean optimalPointPassed = false;
+        boolean realPointPassed = false;
         //iterators.
         int bx = 0, ax = 0;
 
@@ -145,7 +146,8 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
             Double m = Math.min(bidAmount, askAmount);
 
             //Check if we have achieved the optimal point.
-            if (secondCurrencyAmount + orderBook.getAsks().get(ax).getPrice() * m >= optimalV) {
+            if (secondCurrencyAmount + orderBook.getAsks().get(ax).getPrice() * m >= optimalV
+                && !optimalPointPassed) {
 
                 optimalPointPassed = true;
                 double deltaSecond = optimalV - secondCurrencyAmount;
@@ -159,8 +161,10 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
                         , deltaFirst, orderBook.getBids().get(bx).getPrice()));
             }
 
-            if (secondCurrencyAmount + orderBook.getAsks().get(ax).getPrice() * m >= realV) {
+            if (secondCurrencyAmount + orderBook.getAsks().get(ax).getPrice() * m >= realV
+                && !realPointPassed) {
 
+                realPointPassed = true;
                 double deltaSecond = realV - secondCurrencyAmount;
                 double deltaFirst = deltaSecond / orderBook.getAsks().get(ax).getPrice();
                 realFirstCurrencyAmount = firstCurrencyAmount + deltaFirst;
