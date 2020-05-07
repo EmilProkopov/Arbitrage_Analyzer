@@ -1,4 +1,4 @@
-package com.course_project.arbitrage_analyzer.model.disbalance_minimization.minimizers;
+package com.course_project.arbitrage_analyzer.model.disbalance_minimization.minimizers.table_minimizers;
 
 import com.course_project.arbitrage_analyzer.model.CompiledOrderBook;
 
@@ -14,7 +14,7 @@ public class BayesLaplaceMinimizer extends TableMinimizer {
 
 
     @Override
-    double findOptimalV(CompiledOrderBook ob, double maxV_t) {
+    public double findOptimalV(CompiledOrderBook ob, double maxV_t) {
 
         List<Double> possiblePoints = calcPossibleVPoints(ob);
         List<List<Double>> table = formTable(possiblePoints);

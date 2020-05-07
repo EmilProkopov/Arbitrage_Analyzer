@@ -9,7 +9,7 @@ public class SimpleMinimizer extends DisbalanceMinimizer {
     }
 
     @Override
-    double findOptimalV(CompiledOrderBook ob, double maxV_t) {
+    public double findOptimalV(CompiledOrderBook ob, double maxV_t) {
 
         int bx = 0, ax = 0;
         Integer num = -1;   //Number of deals to make

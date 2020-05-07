@@ -5,5 +5,6 @@ public enum MinimizerType {
     BayesLaplace,
     ExpectedRegret,
     CyclicCoordinateDescent,
-    PatternSearch
+    PatternSearch,
+    NelderMead
 }

@@ -21,6 +21,7 @@
         <item>Expected regret</item>
         <item>Cyclic coordinate descent</item>
         <item>Pattern search</item>
+        <item>Nelder-Mead</item>
     </string-array>
 
 </resources>

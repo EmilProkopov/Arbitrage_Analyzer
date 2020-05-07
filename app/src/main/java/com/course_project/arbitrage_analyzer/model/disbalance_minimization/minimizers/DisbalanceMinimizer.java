@@ -23,7 +23,7 @@ public abstract class DisbalanceMinimizer {
 
     private LinkedList<Long> timeHistory;
 
-    DisbalanceMinimizer(TargetFunction targetFunction, short maxRoundsCount
+    public DisbalanceMinimizer(TargetFunction targetFunction, short maxRoundsCount
                         , short timeHistoryMaxLength, int maxIterationsCount) {
 
         this.targetFunction = targetFunction;
@@ -36,10 +36,10 @@ public abstract class DisbalanceMinimizer {
     }
 
 
-    abstract double findOptimalV(CompiledOrderBook ob, double maxV_t);
+    abstract public double findOptimalV(CompiledOrderBook ob, double maxV_t);
 
 
-    private double gaussian(double x) {
+    public double gaussian(double x) {
 
         if (sigma == 0) {
             return alpha;
@@ -166,6 +166,7 @@ public abstract class DisbalanceMinimizer {
 
         CompiledOrderBook obCopy1 = ob.clone();
         CompiledOrderBook obCopy2 = ob.clone();
+        CompiledOrderBook obCopy3 = ob.clone();
         double maxV_t = Util.calculateOBOverlapV(obCopy1.getAsks(), obCopy1.getBids());
 
         long startTime = System.nanoTime();
@@ -175,7 +176,7 @@ public abstract class DisbalanceMinimizer {
         timeHistory.addLast(time);
         updateTargetFunctionParams();
 
-        double optimalAmount = Util.calculateOBOverlapAmount(obCopy1.getAsks(), obCopy1.getBids()
+        double optimalAmount = Util.calculateOBOverlapAmount(obCopy3.getAsks(), obCopy3.getBids()
                 , true, optimalV);
 
         return new MinimizerResult(optimalV, optimalAmount, time, userOB);
@@ -186,11 +187,15 @@ public abstract class DisbalanceMinimizer {
     }
 
 
-    public TargetFunction getTargetFunction() {
+    protected TargetFunction getTargetFunction() {
         return targetFunction;
     }
 
-    public short getMaxRoundsCount() {
+    public void setTargetFunction(TargetFunction targetFunction) {
+        this.targetFunction = targetFunction;
+    }
+
+    protected short getMaxRoundsCount() {
         return maxRoundsCount;
     }
 
@@ -205,4 +210,6 @@ public abstract class DisbalanceMinimizer {
     public void setTradeRatePerSecond(double tradeRatePerSecond) {
         this.tradeRatePerSecond = tradeRatePerSecond;
     }
+
+    protected int getMaxIterationsCount() { return maxIterationsCount; }
 }

@@ -115,7 +115,7 @@ public class Util {
             }
 
             if ((VLimit != null) && (curV + deltaAmount > VLimit)) {
-                deltaAmount = VLimit - curV;
+                deltaAmount = (VLimit - curV > 0) ? deltaAmount*(VLimit - curV)/VLimit : 0;
                 curAmount += deltaAmount;
                 break;
             }

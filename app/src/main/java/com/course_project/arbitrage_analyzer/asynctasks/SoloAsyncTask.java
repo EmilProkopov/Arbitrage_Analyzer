@@ -15,11 +15,15 @@ import com.course_project.arbitrage_analyzer.model.SettingsContainer;
 import com.course_project.arbitrage_analyzer.model.disbalance_minimization.DisbalanceEstimator;
 import com.course_project.arbitrage_analyzer.model.disbalance_minimization.EstimatorResult;
 import com.course_project.arbitrage_analyzer.model.disbalance_minimization.MinimizerResult;
-import com.course_project.arbitrage_analyzer.model.disbalance_minimization.minimizers.BayesLaplaceMinimizer;
 import com.course_project.arbitrage_analyzer.model.disbalance_minimization.minimizers.DisbalanceMinimizer;
-import com.course_project.arbitrage_analyzer.model.disbalance_minimization.minimizers.ExpectedRegretMinimizer;
 import com.course_project.arbitrage_analyzer.model.disbalance_minimization.minimizers.MinimizerType;
 import com.course_project.arbitrage_analyzer.model.disbalance_minimization.minimizers.SimpleMinimizer;
+import com.course_project.arbitrage_analyzer.model.disbalance_minimization.minimizers.SurfaceMinimizers.CyclicCoordinateDescentMinimizer;
+import com.course_project.arbitrage_analyzer.model.disbalance_minimization.minimizers.SurfaceMinimizers.NelderMeadMinimizer;
+import com.course_project.arbitrage_analyzer.model.disbalance_minimization.minimizers.SurfaceMinimizers.PatternSearchMinimizer;
+import com.course_project.arbitrage_analyzer.model.disbalance_minimization.minimizers.table_minimizers.BayesLaplaceMinimizer;
+import com.course_project.arbitrage_analyzer.model.disbalance_minimization.minimizers.table_minimizers.ExpectedRegretMinimizer;
+import com.course_project.arbitrage_analyzer.model.disbalance_minimization.minimizers.target_functions.SurfaceTargetFunction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,10 +78,43 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
         if (mt.equals(MinimizerType.BayesLaplace)) {
             minimizer = new BayesLaplaceMinimizer(settings.getHistorySize()
                                                 , settings.getRiskConst());
-        } else if (mt.equals(MinimizerType.ExpectedRegret)) {
+        }
+        else if (mt.equals(MinimizerType.ExpectedRegret)) {
             minimizer = new ExpectedRegretMinimizer(settings.getHistorySize()
                                                 , settings.getRiskConst());
-        } else {
+        }
+        else if (mt.equals(MinimizerType.CyclicCoordinateDescent)) {
+            minimizer = new CyclicCoordinateDescentMinimizer((short) settings.getNumberOfLaunches()
+                                                            , settings.getHistorySize()
+                                                            , settings.getMaxIterations());
+
+            SurfaceTargetFunction tf = new SurfaceTargetFunction(settings.getRiskConst()
+                                                                , minimizer);
+
+            minimizer.setTargetFunction(tf);
+        }
+        else if (mt.equals(MinimizerType.PatternSearch)) {
+            minimizer = new PatternSearchMinimizer((short) settings.getNumberOfLaunches()
+                    , settings.getHistorySize()
+                    , settings.getMaxIterations());
+
+            SurfaceTargetFunction tf = new SurfaceTargetFunction(settings.getRiskConst()
+                    , minimizer);
+
+            minimizer.setTargetFunction(tf);
+        }
+        else if (mt.equals(MinimizerType.NelderMead)) {
+            minimizer = new NelderMeadMinimizer((short) settings.getNumberOfLaunches()
+                    , settings.getHistorySize()
+                    , settings.getMaxIterations());
+
+            SurfaceTargetFunction tf = new SurfaceTargetFunction(settings.getRiskConst()
+                    , minimizer);
+
+            minimizer.setTargetFunction(tf);
+        }
+
+        else {
             minimizer = new SimpleMinimizer();
         }
     }

@@ -149,6 +149,10 @@ public class MainActivity extends AppCompatActivity implements ArbitrageView {
                 minType = MinimizerType.PatternSearch;
                 break;
 
+            case ("Nelder-Mead"):
+                minType = MinimizerType.NelderMead;
+                break;
+
                 default:
                     minType = MinimizerType.Simple;
         }

@@ -1,19 +1,20 @@
-package com.course_project.arbitrage_analyzer.model.disbalance_minimization.minimizers;
+package com.course_project.arbitrage_analyzer.model.disbalance_minimization.minimizers.table_minimizers;
 
 import com.course_project.arbitrage_analyzer.model.CompiledOrderBook;
+import com.course_project.arbitrage_analyzer.model.disbalance_minimization.minimizers.DisbalanceMinimizer;
 import com.course_project.arbitrage_analyzer.model.disbalance_minimization.minimizers.target_functions.TableTargetFunction;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class TableMinimizer extends DisbalanceMinimizer {
+abstract class TableMinimizer extends DisbalanceMinimizer {
 
-    public TableMinimizer(short timeHistoryMaxLength, double riskConst) {
+    TableMinimizer(short timeHistoryMaxLength, double riskConst) {
         super(new TableTargetFunction(riskConst), (short)-1, timeHistoryMaxLength, -1);
     }
 
 
-    protected List<Double> calcPossibleVPoints(CompiledOrderBook obO) {
+    List<Double> calcPossibleVPoints(CompiledOrderBook obO) {
 
         CompiledOrderBook ob = obO.clone();
 
@@ -49,7 +50,7 @@ public abstract class TableMinimizer extends DisbalanceMinimizer {
         return possiblePoints;
     }
 
-    protected List<List<Double>> formTable(List<Double> possiblePoints) {
+    List<List<Double>> formTable(List<Double> possiblePoints) {
 
         List<List<Double>> table = new ArrayList<>();
         for (int i = 0; i < possiblePoints.size(); ++i) {
