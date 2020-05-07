@@ -29,6 +29,7 @@ import java.util.concurrent.TimeUnit;
 public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet> {
 
     private static final String LOGTAG = "SoloAsyncTask";
+    private long trpsUpdatePeriod = 1800000;
 
     private ArbitragePresenter presenter;
     private SettingsContainer settings;
@@ -40,6 +41,7 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
     private DisbalanceEstimator estimator;
 
     private boolean firstLoop = true;
+    private long lastTRPSUpdateTime;
 
     public SoloAsyncTask(OrderBookGetter.OrderBookGetterProgressListener orderBookListener,
                          ArbitragePresenter presenter) {
@@ -51,6 +53,7 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
         infoGetter = new MarketInfoGetter();
         estimator = new DisbalanceEstimator();
         initializeMinimizer();
+        lastTRPSUpdateTime = System.currentTimeMillis();
     }
 
 
@@ -80,12 +83,20 @@ public class SoloAsyncTask extends AsyncTask<Void, OutputDataSet, OutputDataSet>
     }
 
 
+    private void updateTRPS() {
+        firstLoop = false;
+        double trps = infoGetter.getTradeRatePerSeoond(settings);
+        minimizer.setTradeRatePerSecond(trps);
+    }
+
+
     private OutputDataSet analyzeMarkets() {
 
-        if (firstLoop) {
-            firstLoop = false;
-            double trps = infoGetter.getTradeRatePerSeoond(settings);
-            minimizer.setTradeRatePerSecond(trps);
+        long curTime = System.currentTimeMillis();
+
+        if (firstLoop || curTime - lastTRPSUpdateTime >= trpsUpdatePeriod) {
+            updateTRPS();
+            lastTRPSUpdateTime = curTime;
         }
         //Get orderBook with top orders from all markets.
         CompiledOrderBook orderBook = orderBookGetter.getCompiledOrderBook(settings, true);
