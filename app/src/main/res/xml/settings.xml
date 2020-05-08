@@ -70,7 +70,7 @@
             android:dialogTitle="Input the rick constant value (from 0 to 1)"
             android:key="risk_const"
             android:summary="Value of risk constant"
-            android:dialogLayout="@layout/preference_edit_text"
+            android:dialogLayout="@layout/preference_edit_text_double"
             android:title="Risk constant"/>
 
         <EditTextPreference
